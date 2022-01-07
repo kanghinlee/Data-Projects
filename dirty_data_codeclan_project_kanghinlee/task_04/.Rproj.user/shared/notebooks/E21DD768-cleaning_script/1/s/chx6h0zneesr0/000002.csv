@@ -1,0 +1,6 @@
+"0","# #Export Clean data into csv file"
+"0","write.table(main_15, file = ""E:\\CodeClan\\codeclan_homework_kanghlee\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_15.csv"", sep="","", row.names = FALSE)"
+"0",""
+"0","write.table(main_16, file = ""E:\\CodeClan\\codeclan_homework_kanghlee\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_16.csv"", sep="","", row.names=FALSE)"
+"0","#"
+"0","write.table(main_17, file = ""E:\\CodeClan\\codeclan_homework_kanghlee\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_17.csv"", sep="","", row.names=FALSE)"

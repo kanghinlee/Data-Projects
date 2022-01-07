@@ -1,0 +1,4 @@
+"0","deca_main %>% "
+"0","  select(x100m, competition) %>%"
+"0","  group_by(competition) %>% "
+"0","  summarise_at(vars(x100m), list(avg_100m_time = mean))"
