@@ -1,0 +1,222 @@
+
+
+# Packages
+library(tidyverse)
+library(here)
+library(readxl)
+library(stringr)
+library(naniar)
+
+# Load Raw Files
+raw_15 <- read_excel("raw_data/boing-boing-candy-2015.xlsx")
+raw_16 <- read_excel("raw_data/boing-boing-candy-2016.xlsx")
+raw_17 <- read_excel("raw_data/boing-boing-candy-2017.xlsx")
+
+
+# Clean 2015 dataset
+
+## clean names
+main_15 <- janitor::clean_names(raw_15)
+
+## rename column for clarity
+names(main_15)[names(main_15) == "how_old_are_you"] <- "age"
+names(main_15)[names(main_15) == "are_you_going_actually_going_trick_or_treating_yourself"] <-
+  "going_out"
+main_15 <- relocate(main_15, going_out, .after = timestamp)
+
+main_15$age <- str_replace_all(main_15$age, "[:alpha:]", "")
+main_15$age <- str_replace_all(main_15$age, " ", "")
+main_15$age <- str_replace_all(main_15$age, "[$\\.0]", "")
+main_15$age <- str_replace_all(main_15$age, "[:punct:]", "")
+main_15$age <- str_replace_all(main_15$age, "[>]", "")
+main_15$age <-
+  str_replace_all(main_15$age, "[^[0-9]+[0-9]+[0-9]]", "")
+main_15$age <- as.numeric(main_15$age, replace = TRUE)
+main_15$age[main_15$age > 120] <- ""
+main_15$age <- na_if(main_15$age, "")
+
+
+
+## Clean 2016 dataset
+
+main_16 <- janitor::clean_names(raw_16)
+
+## move the numeric values from country to age column...
+age_in_country <-
+  str_detect(main_16$which_country_do_you_live_in, "[:digit:]")
+age_in_country_position <- which(age_in_country == TRUE)
+
+for (ind_pos in age_in_country_position) {
+  main_16$how_old_are_you[ind_pos] <-
+    main_16$which_country_do_you_live_in[ind_pos]
+  
+  main_16$which_country_do_you_live_in[ind_pos] <-
+    na_if(TRUE , TRUE)
+}
+
+
+main_16$how_old_are_you <-
+  str_replace_all(main_16$how_old_are_you, "[:alpha:]", "")
+main_16$how_old_are_you <-
+  str_replace_all(main_16$how_old_are_you, " ", "")
+main_16$how_old_are_you <-
+  str_replace_all(main_16$how_old_are_you, "[$\\.0]", "")
+main_16$how_old_are_you <-
+  str_replace_all(main_16$how_old_are_you, "[:punct:]", "")
+main_16$how_old_are_you <-
+  str_replace_all(main_16$how_old_are_you, "[>]", "")
+main_16$how_old_are_you <-
+  str_replace_all(main_16$how_old_are_you, "[^[0-9]+[0-9]+[0-9]]", "")
+main_16$how_old_are_you <-
+  as.numeric(main_16$how_old_are_you, replace = TRUE)
+main_16$how_old_are_you[main_16$how_old_are_you > 120] <- ""
+main_16$how_old_are_you <- na_if(main_16$how_old_are_you, "")
+
+
+
+## convert all countries into lowercase
+main_16$which_country_do_you_live_in <-
+  tolower(main_16$which_country_do_you_live_in)
+
+
+## take out the not canada nor usa to other country
+main_16$which_country_do_you_live_in <-
+  str_replace_all(main_16$which_country_do_you_live_in,
+                  "(not)[\\s\\S]*",
+                  "other country")
+
+## convert any u...k... into UK
+main_16$which_country_do_you_live_in <-
+  str_replace_all(main_16$which_country_do_you_live_in, "u\\w+ +k\\w+", "uk")
+
+## convert any merica or murica to us
+main_16$which_country_do_you_live_in <-
+  str_replace_all(main_16$which_country_do_you_live_in,
+                  ".+(m(e|u)rica)|(m(e|u)rica)",
+                  "us")
+
+## convert any usa(s)
+main_16$which_country_do_you_live_in <-
+  str_replace_all(main_16$which_country_do_you_live_in,
+                  ".*(usa).*|.*u.+s.+",
+                  "us")
+
+names(main_16)[names(main_16) == "how_old_are_you"] <- "age"
+names(main_16)[names(main_16) == "your_gender"] <- "gender"
+names(main_16)[names(main_16) == "which_country_do_you_live_in"] <-
+  "country"
+names(main_16)[names(main_16) == "are_you_going_actually_going_trick_or_treating_yourself"] <-
+  "going_out"
+names(main_16)[names(main_16) == "which_state_province_county_do_you_live_in"] <-
+  "province_n_county"
+
+main_16 <- relocate(main_16, going_out, .after = timestamp)
+main_16 <- relocate(main_16, age, .after = going_out)
+
+
+## Clean 2017 dataset
+
+## similar logics to cleaning main_16
+main_17 <- janitor::clean_names(raw_17)
+
+age_in_country <- str_detect(main_17$q4_country, "[:digit:]")
+age_in_country_position <- which(age_in_country == TRUE)
+
+for (ind_pos in age_in_country_position) {
+  main_17$q3_age[ind_pos] <- main_17$q4_country[ind_pos]
+  
+  main_17$q4_country[ind_pos] <- na_if(TRUE , TRUE)
+}
+
+main_17$q3_age <- str_replace_all(main_17$q3_age, "[:alpha:]", "")
+main_17$q3_age <- str_replace_all(main_17$q3_age, " ", "")
+main_17$q3_age <- str_replace_all(main_17$q3_age, "[$\\.0]", "")
+main_17$q3_age <- str_replace_all(main_17$q3_age, "[:punct:]", "")
+main_17$q3_age <- str_replace_all(main_17$q3_age, "[>]", "")
+main_17$q3_age <-
+  str_replace_all(main_17$q3_age, "[^[0-9]+[0-9]+[0-9]]", "")
+main_17$q3_age <- as.numeric(main_17$q3_age, replace = TRUE)
+main_17$q3_age[main_17$q3_age > 120] <- ""
+main_17$q3_age <- na_if(main_17$q3_age, "")
+
+
+main_17$q4_country <- tolower(main_17$q4_country)
+
+## take out the not Canada nor usa to other country
+main_17$q4_country <-
+  str_replace_all(main_17$q4_country, "(not)[\\s\\S]*", "other country")
+
+## convert any u...k... into UK
+main_17$q4_country <-
+  str_replace_all(main_17$q4_country, "u\\w+ +k\\w+|.*u.+k.+", "uk")
+
+## convert any merica or murica to us
+main_17$q4_country <-
+  str_replace_all(main_17$q4_country, ".+(m(e|u)rica)|(m(e|u)rica)", "us")
+
+# convert any usa
+main_17$q4_country <-
+  str_replace_all(
+    main_17$q4_country,
+    ".*(usa).*|.*u.+s.+|.*u+[\\s\\S]+s.* | .*(us)+[\\s\\S]+a.*",
+    "us"
+  )
+
+## table(main_17$q4_country)
+
+## remove q_xx before each column for clarity
+names(main_17)[names(main_17) == "internal_id"] <- "q0_internal_id"
+names(main_17)[names(main_17) == "x114"] <- "q14_x114"
+names(main_17)[names(main_17) == "click_coordinates_x_y"] <-
+  "q13_click_coordinates_x_y"
+
+for (col in 1:ncol(main_17)) {
+  colnames(main_17)[col] <-
+    sub("(q[0-9]+_)", "", colnames(main_17)[col])
+}
+
+## rename province & county for consistency
+names(main_17)[names(main_17) == "state_province_county_etc"] <-
+  "province_n_county"
+
+main_17 <- relocate(main_17, going_out, .after = internal_id)
+main_17 <- relocate(main_17, age, .after = going_out)
+
+## For consistency, adding additional columns 'gender, country, county' to main_15.
+
+main_15$gender <- NA
+main_15$country <- NA
+
+main_15 <-  relocate(main_15, country, .after = age)
+main_15 <-  relocate(main_15, gender, .after = age)
+
+main_16 <- main_16 %>%
+  select(-c(province_n_county))
+main_17 <- main_17 %>%
+  select(-c(province_n_county))
+
+## extract the essential only for asking questions
+
+main_15 <- main_15[2:96]
+main_16 <- main_16[2:105]
+main_17 <- main_17[2:108]
+
+main_15 <- main_15[rowSums(is.na(main_15)) != ncol(main_15),]
+main_16 <- main_16[rowSums(is.na(main_16)) != ncol(main_16),]
+main_17 <- main_17[rowSums(is.na(main_17)) != ncol(main_17),]
+
+main_15$year <- 2015
+main_15 <- relocate(main_15, year, .before = going_out)
+main_16$year <- 2016
+main_16 <- relocate(main_16, year, .before = going_out)
+main_17$year <- 2017
+main_17 <- relocate(main_17, year, .before = going_out)
+
+
+## Export Clean data into csv file
+## Require relative path
+
+write.table(main_15, file = "E:\\CodeClan\\Project\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_15.csv", sep=",", row.names = FALSE)
+write.table(main_16, file = "E:\\CodeClan\\Project\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_16.csv", sep=",", row.names=FALSE)
+write.table(main_17, file = "E:\\CodeClan\\Project\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_17.csv", sep=",", row.names=FALSE)
+

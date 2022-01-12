@@ -1,11 +1,9 @@
 ---
-title: "R Notebook"
+title: "dd_clean"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
 ```{r}
 library(tidyverse)
@@ -121,6 +119,7 @@ names(main_16)[names(main_16) == "which_state_province_county_do_you_live_in"] <
 main_16 <- relocate(main_16, going_out, .after = timestamp)
 main_16 <- relocate(main_16, age, .after = going_out)
 ```
+
 # Clean 2017 dataset
 ```{r}
 # similar logics to cleaning main_16
@@ -191,28 +190,52 @@ main_17 <- relocate(main_17, age, .after = going_out)
 
 ```
 
+## For consistency, adding additional columns 'gender, country, county' to main_15.
+```{r}
+main_15$gender <- NA
+main_15$country <- NA
+
+main_15 <-  relocate(main_15,country, .after = age)
+main_15 <-  relocate(main_15,gender, .after = age)
+
+main_16 <- main_16 %>% 
+  select(-c(province_n_county))
+main_17 <- main_17 %>% 
+  select(-c(province_n_county))
+
+```
+
+
 # extract the essential only for asking questions
 ```{r}
 
 main_15 <- main_15[2:96]
+main_16 <- main_16[2:105]
+main_17 <- main_17[2:108]
+
+main_15 <- main_15[rowSums(is.na(main_15)) != ncol(main_15),]
+main_16 <- main_16[rowSums(is.na(main_16)) != ncol(main_16),]
+main_17 <- main_17[rowSums(is.na(main_17)) != ncol(main_17),]
+
 main_15$year <- 2015
 main_15 <- relocate(main_15, year, .before = going_out)
-
-main_16 <- main_16[2:106]
 main_16$year <- 2016
 main_16 <- relocate(main_16, year, .before = going_out)
-
-main_17 <- main_17[2:109]
 main_17$year <- 2017
 main_17 <- relocate(main_17, year, .before = going_out)
 ```
 
 
+
+
+
+
+
 # Export Clean data into csv file
 ```{r}
-# write.table(main_15, file = "E:\\CodeClan\\codeclan_homework_kanghlee\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_15.csv", sep=",", row.names = FALSE)
-# 
-# write.table(main_16, file = "E:\\CodeClan\\codeclan_homework_kanghlee\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_16.csv", sep=",", row.names=FALSE)
-# #
-# write.table(main_17, file = "E:\\CodeClan\\codeclan_homework_kanghlee\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_17.csv", sep=",", row.names=FALSE)
+write.table(main_15, file = "E:\\CodeClan\\Project\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_15.csv", sep=",", row.names = FALSE)
+
+write.table(main_16, file = "E:\\CodeClan\\Project\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_16.csv", sep=",", row.names=FALSE)
+
+write.table(main_17, file = "E:\\CodeClan\\Project\\dirty_data_codeclan_project_kanghinlee\\task_04\\clean_data\\clean_main_17.csv", sep=",", row.names=FALSE)
 ```

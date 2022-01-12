@@ -229,68 +229,55 @@ library(janitor)</code></pre>
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmF3XzE1IDwtIHJlYWRfY3N2KFwiY2xlYW5fZGF0YS9jbGVhbl9tYWluXzE1LmNzdlwiKVxuYGBgIn0= -->
-<pre class="r"><code>raw_15 &lt;- read_csv(&quot;clean_data/clean_main_15.csv&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xlYW5fMTUgPC0gcmVhZF9jc3YoXCJjbGVhbl9kYXRhL2NsZWFuX21haW5fMTUuY3N2XCIpXG5gYGAifQ== -->
+<pre class="r"><code>clean_15 &lt;- read_csv(&quot;clean_data/clean_main_15.csv&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNTYzMCBDb2x1bW5zOiA5NlxuLS0gQ29sdW1uIHNwZWNpZmljYXRpb24gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICg5NCk6IGdvaW5nX291dCwgYnV0dGVyZmluZ2VyLCB4MTAwX2dyYW5kX2JhciwgYW5vbnltb3VzX2Jyb3duX2dsb2JzX3RoYXRfY29tZV9pLi4uXG5kYmwgICgyKTogeWVhciwgYWdlXG5cbmkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG5pIFNwZWNpZnkgdGhlIGNvbHVtbiB0eXBlcyBvciBzZXQgYHNob3dfY29sX3R5cGVzID0gRkFMU0VgIHRvIHF1aWV0IHRoaXMgbWVzc2FnZS5cbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNTYzMCBDb2x1bW5zOiA5NlxuLS0gQ29sdW1uIHNwZWNpZmljYXRpb24gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICg5Mik6IGdvaW5nX291dCwgYnV0dGVyZmluZ2VyLCB4MTAwX2dyYW5kX2JhciwgYW5vbnltb3VzX2Jyb3duX2dsb2JzX3RoYXRfY29tZV9pbl9ibGFja19hbmRfb3JhbmdlX3dyYXBwZXJzLCBhbnlfZnVsbF9zLi4uXG5kYmwgICgyKTogeWVhciwgYWdlXG5sZ2wgICgyKTogZ2VuZGVyLCBjb3VudHJ5XG5cbmkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG5pIFNwZWNpZnkgdGhlIGNvbHVtbiB0eXBlcyBvciBzZXQgYHNob3dfY29sX3R5cGVzID0gRkFMU0VgIHRvIHF1aWV0IHRoaXMgbWVzc2FnZS5cbiJ9 -->
 <pre><code>Rows: 5630 Columns: 96
--- Column specification ----------------------------------------------------------------
+-- Column specification -------------------------------------------------------------------------------------------------------
 Delimiter: &quot;,&quot;
-chr (94): going_out, butterfinger, x100_grand_bar, anonymous_brown_globs_that_come_i...
+chr (92): going_out, butterfinger, x100_grand_bar, anonymous_brown_globs_that_come_in_black_and_orange_wrappers, any_full_s...
 dbl  (2): year, age
+lgl  (2): gender, country
 
 i Use `spec()` to retrieve the full column specification for this data.
 i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmF3XzE2IDwtIHJlYWRfY3N2KFwiY2xlYW5fZGF0YS9jbGVhbl9tYWluXzE2LmNzdlwiKVxuYGBgIn0= -->
-<pre class="r"><code>raw_16 &lt;- read_csv(&quot;clean_data/clean_main_16.csv&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xlYW5fMTYgPC0gcmVhZF9jc3YoXCJjbGVhbl9kYXRhL2NsZWFuX21haW5fMTYuY3N2XCIpXG5gYGAifQ== -->
+<pre class="r"><code>clean_16 &lt;- read_csv(&quot;clean_data/clean_main_16.csv&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMTI1OSBDb2x1bW5zOiAxMDZcbi0tIENvbHVtbiBzcGVjaWZpY2F0aW9uIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbkRlbGltaXRlcjogXCIsXCJcbmNociAoMTA0KTogZ29pbmdfb3V0LCBnZW5kZXIsIGNvdW50cnksIHByb3ZpbmNlX25fY291bnR5LCB4MTAwX2dyYW5kX2JhciwgYW5vbnltb3VzXy4uLlxuZGJsICAgKDIpOiB5ZWFyLCBhZ2VcblxuaSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbmkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
-<pre><code>Rows: 1259 Columns: 106
--- Column specification ----------------------------------------------------------------
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMTI1OSBDb2x1bW5zOiAxMDVcbi0tIENvbHVtbiBzcGVjaWZpY2F0aW9uIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbkRlbGltaXRlcjogXCIsXCJcbmNociAoMTAzKTogZ29pbmdfb3V0LCBnZW5kZXIsIGNvdW50cnksIHgxMDBfZ3JhbmRfYmFyLCBhbm9ueW1vdXNfYnJvd25fZ2xvYnNfdGhhdF9jb21lX2luX2JsYWNrX2FuZF9vcmFuZ2Vfd3JhcHBlcnMsIGFueV9mdS4uLlxuZGJsICAgKDIpOiB5ZWFyLCBhZ2VcblxuaSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbmkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 1259 Columns: 105
+-- Column specification -------------------------------------------------------------------------------------------------------
 Delimiter: &quot;,&quot;
-chr (104): going_out, gender, country, province_n_county, x100_grand_bar, anonymous_...
+chr (103): going_out, gender, country, x100_grand_bar, anonymous_brown_globs_that_come_in_black_and_orange_wrappers, any_fu...
 dbl   (2): year, age
 
 i Use `spec()` to retrieve the full column specification for this data.
 i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmF3XzE3IDwtIHJlYWRfY3N2KFwiY2xlYW5fZGF0YS9jbGVhbl9tYWluXzE3LmNzdlwiKVxuYGBgIn0= -->
-<pre class="r"><code>raw_17 &lt;- read_csv(&quot;clean_data/clean_main_17.csv&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xlYW5fMTcgPC0gcmVhZF9jc3YoXCJjbGVhbl9kYXRhL2NsZWFuX21haW5fMTcuY3N2XCIpXG5gYGAifQ== -->
+<pre class="r"><code>clean_17 &lt;- read_csv(&quot;clean_data/clean_main_17.csv&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMjQ2MCBDb2x1bW5zOiAxMDlcbi0tIENvbHVtbiBzcGVjaWZpY2F0aW9uIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbkRlbGltaXRlcjogXCIsXCJcbmNociAoMTA3KTogZ29pbmdfb3V0LCBnZW5kZXIsIGNvdW50cnksIHByb3ZpbmNlX25fY291bnR5LCAxMDBfZ3JhbmRfYmFyLCBhbm9ueW1vdXNfYi4uLlxuZGJsICAgKDIpOiB5ZWFyLCBhZ2VcblxuaSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbmkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
-<pre><code>Rows: 2460 Columns: 109
--- Column specification ----------------------------------------------------------------
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMjQzOSBDb2x1bW5zOiAxMDhcbi0tIENvbHVtbiBzcGVjaWZpY2F0aW9uIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbkRlbGltaXRlcjogXCIsXCJcbmNociAoMTA2KTogZ29pbmdfb3V0LCBnZW5kZXIsIGNvdW50cnksIDEwMF9ncmFuZF9iYXIsIGFub255bW91c19icm93bl9nbG9ic190aGF0X2NvbWVfaW5fYmxhY2tfYW5kX29yYW5nZV93cmFwcGVyc19hX2tfYV9tYS4uLlxuZGJsICAgKDIpOiB5ZWFyLCBhZ2VcblxuaSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbmkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 2439 Columns: 108
+-- Column specification -------------------------------------------------------------------------------------------------------
 Delimiter: &quot;,&quot;
-chr (107): going_out, gender, country, province_n_county, 100_grand_bar, anonymous_b...
+chr (106): going_out, gender, country, 100_grand_bar, anonymous_brown_globs_that_come_in_black_and_orange_wrappers_a_k_a_ma...
 dbl   (2): year, age
 
 i Use `spec()` to retrieve the full column specification for this data.
 i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFpbl8xNSA8LSByYXdfMTVcbm1haW5fMTYgPC0gcmF3XzE2XG5tYWluXzE3IDwtIHJhd18xN1xuYGBgIn0= -->
-<pre class="r"><code>main_15 &lt;- raw_15
-main_16 &lt;- raw_16
-main_17 &lt;- raw_17</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFpbl8xNSA8LSBjbGVhbl8xNVxubWFpbl8xNiA8LSBjbGVhbl8xNlxubWFpbl8xNyA8LSBjbGVhbl8xN1xubWFpbl90b3QgPC0gYmluZF9yb3dzKG1haW5fMTUsIG1haW5fMTYpICU+JVxuICBiaW5kX3Jvd3MobWFpbl8xNylcbmBgYCJ9 -->
+<pre class="r"><code>main_15 &lt;- clean_15
+main_16 &lt;- clean_16
+main_17 &lt;- clean_17
+main_tot &lt;- bind_rows(main_15, main_16) %&gt;%
+  bind_rows(main_17)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<div id="for-consistency-adding-additional-columns-gender-country-county-to-main_15." class="section level2">
-<h2>For consistency, adding additional columns ‘gender, country, county’ to main_15.</h2>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFpbl8xNSRnZW5kZXIgPC0gTkFcbm1haW5fMTUkY291bnRyeSA8LSBOQVxubWFpbl8xNSRwcm92aW5jZV9uX2NvdW50eSA8LSBOQVxuXG5tYWluXzE1IDwtICByZWxvY2F0ZShtYWluXzE1LHByb3ZpbmNlX25fY291bnR5LCAuYWZ0ZXIgPSBhZ2UpXG5tYWluXzE1IDwtICByZWxvY2F0ZShtYWluXzE1LGNvdW50cnksIC5hZnRlciA9IGFnZSlcbm1haW5fMTUgPC0gIHJlbG9jYXRlKG1haW5fMTUsZ2VuZGVyLCAuYWZ0ZXIgPSBhZ2UpXG5gYGAifQ== -->
-<pre class="r"><code>main_15$gender &lt;- NA
-main_15$country &lt;- NA
-main_15$province_n_county &lt;- NA
-
-main_15 &lt;-  relocate(main_15,province_n_county, .after = age)
-main_15 &lt;-  relocate(main_15,country, .after = age)
-main_15 &lt;-  relocate(main_15,gender, .after = age)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
 <div id="task-4---question-1---what-is-the-total-number-of-candy-ratings-given-across" class="section level2">
 <h2>Task 4 - Question 1 - What is the total number of candy ratings given across</h2>
 </div>
@@ -305,8 +292,8 @@ Cand_count_2017 &lt;- sum(!is.na(main_17[7:ncol(main_17)]))
 Cand_count = Cand_count_2015+Cand_count_2016+Cand_count_2017
 Cand_count</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDc2MjM1NVxuIn0= -->
-<pre><code>[1] 762355</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDc0NDEwMVxuIn0= -->
+<pre><code>[1] 744101</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -402,204 +389,33 @@ nrow(star_despair)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="unfinishtask-4---question-5---for-the-next-three-questions-count-despair-as--1-joy-as-1-and-meh-as-0." class="section level2">
-<h2>(Unfinish)Task 4 - Question 5 - For the next three questions, count despair as -1, joy as +1 and meh as 0.</h2>
+<div id="for-the-next-three-questions-count-despair-as--1-joy-as-1-and-meh-as-0." class="section level2">
+<h2>For the next three questions, count despair as -1, joy as +1 and meh as 0.</h2>
+</div>
+<div id="task-4---question-6---what-was-the-most-popular-candy-bar-by-this-rating-system-for-each-gender-in-the-dataset" class="section level2">
+<h2>Task 4 - Question 6 - What was the most popular candy bar by this rating system for each gender in the dataset?</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmVnX251bSA8LSBmdW5jdGlvbih4KSAtMSphYnMoeClcblxuYGBgIn0= -->
-<pre class="r"><code>neg_num &lt;- function(x) -1*abs(x)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmF0aW5nX3RvdCA8LSBtYWluX3RvdCAlPiVcbiAgc2VsZWN0KC1jKHllYXIsIGdvaW5nX291dCwgYWdlLCBjb3VudHJ5KSkgJT4lXG4gIGdyb3VwX2J5KGdlbmRlcikgJT4lXG4gIHN1bW1hcmlzZShhY3Jvc3Mod2hlcmUoLixcIkpPWVwiKSksbmEucm0gPSBUUlVFKVxuXG5gYGAifQ== -->
+<pre class="r"><code>rating_tot &lt;- main_tot %&gt;%
+  select(-c(year, going_out, age, country)) %&gt;%
+  group_by(gender) %&gt;%
+  summarise(across(where(.,&quot;JOY&quot;)),na.rm = TRUE)
 </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB2YWxfdG90IDwtIHQodmFsX3RvdClcbiMgXG4jIHJhdF9udW1fdG90IDwtIHNldE5hbWVzKGRhdGEuZnJhbWUobWF0cml4KG5jb2wgPSBuY29sKHZhbF90b3QpLCBucm93ID0gbnJvdyh2YWxfdG90KSkpLCBjKFwiVjFcIikpXG4jIGNvbG5hbWVzKHJhdF9udW1fdG90KSA8LSBjb2xuYW1lcyh2YWxfdG90KVxuIyByb3duYW1lcyhyYXRfbnVtX3RvdCkgPC0gcm93bmFtZXModmFsX3RvdClcbiMgXG4jIGZvciAoeCBpbiAxOm5jb2wodmFsX3RvdCkpIHtcbiMgICBmb3IgKHkgaW4gMTpucm93KHZhbF90b3QpKSB7XG4jICAgICBpZiAoaXMubmEodmFsX3RvdFt4LCB5XSkgPT0gVFJVRSB8fCBpcy5udWxsKHZhbF90b3RbeCx5XSkgPT0gVFJVRSkge1xuIyAgICAgICByYXRfbnVtX3RvdFt4LCB5XSA8LSBOQVxuIyAgICAgfSBlbHNlIGlmICh2YWxfdG90W3gsIHldID09ICdNRUgnKSB7XG4jICAgICAgIHJhdF9udW1fdG90W3gsIHldIDwtIDBcbiMgICAgIH0gZWxzZSBpZiAodmFsX3RvdFt4LCB5XSA9PSAnSk9ZJykge1xuIyAgICAgICAgcmF0X251bV90b3RbeCwgeV0gPC0gMSAgICAgXG4jICAgICB9ICAgZWxzZSBpZiAodmFsX3RvdFt4LCB5XSA9PSAnREVTUEFJUicpIHtcbiMgICAgICAgcmF0X251bV90b3RbeCwgeV0gPC0gbmVnX251bSgxKVxuIyAgICAgfSAgICAgIGVsc2Uge1xuIyAgICAgICByYXRfbnVtX3RvdFt4LCB5XSA8LSB2YWxfdG90W3gsIHldXG4jICAgICB9XG4jICAgfVxuIyB9XG5cblxudmFsX21haW5fMTUgPC0gKHQobWFpbl8xNVstYygyLCAzLCA2KV0pKVxuXG5kZXNfMTUgPC0gc2V0TmFtZXMoZGF0YS5mcmFtZShtYXRyaXgobmNvbCA9IG5jb2wodmFsX21haW5fMTUpLCBucm93ID0gbnJvdyh2YWxfbWFpbl8xNSkpKSwgYyhcIlYxXCIpKVxuY29sbmFtZXMoZGVzXzE1KSA8LSBjb2xuYW1lcyh2YWxfbWFpbl8xNSlcbnJvd25hbWVzKGRlc18xNSkgPC0gcm93bmFtZXModmFsX21haW5fMTUpXG5cbmZvciAoeCBpbiAxIDogbmNvbCh2YWxfbWFpbl8xNSkpIHtcbmZvciAoeSBpbiAxIDogbnJvdyh2YWxfbWFpbl8xNSkpIHtcbiAgaWYgKGlzLm5hKHZhbF9tYWluXzE1W3gseV0pID09IFRSVUUpIHtcbiAgICBkZXNfMTVbeCx5XSA8LSBOQVxuICAgIH0gZWxzZSB7XG5pZiAodmFsX21haW5fMTVbeCx5XSA9PSAnTUVIJykge1xuICBkZXNfMTVbeCx5XSA8LSAwXG59IGVsc2UgaWYgKHZhbF9tYWluXzE1W3gseV0gPT0gJ0pPWScpIHtcbiAgZGVzXzE1W3gseV0gPC0gMVxufSAgIGVsc2UgaWYgKHZhbF9tYWluXzE1W3gseV0gPT0gJ0RFU1BBSVInKXtcbiAgICBkZXNfMTVbeCx5XSA8LSBuZWdfbnVtKDEpXG59ICAgICAgZWxzZSB7XG4gIGRlc18xNVt4LHldIDwtIHZhbF9tYWluXzE1W3gseV1cbn19XG59XG59XG5gYGAifQ== -->
-<pre class="r"><code># val_tot &lt;- t(val_tot)
-# 
-# rat_num_tot &lt;- setNames(data.frame(matrix(ncol = ncol(val_tot), nrow = nrow(val_tot))), c(&quot;V1&quot;))
-# colnames(rat_num_tot) &lt;- colnames(val_tot)
-# rownames(rat_num_tot) &lt;- rownames(val_tot)
-# 
-# for (x in 1:ncol(val_tot)) {
-#   for (y in 1:nrow(val_tot)) {
-#     if (is.na(val_tot[x, y]) == TRUE || is.null(val_tot[x,y]) == TRUE) {
-#       rat_num_tot[x, y] &lt;- NA
-#     } else if (val_tot[x, y] == &#39;MEH&#39;) {
-#       rat_num_tot[x, y] &lt;- 0
-#     } else if (val_tot[x, y] == &#39;JOY&#39;) {
-#        rat_num_tot[x, y] &lt;- 1     
-#     }   else if (val_tot[x, y] == &#39;DESPAIR&#39;) {
-#       rat_num_tot[x, y] &lt;- neg_num(1)
-#     }      else {
-#       rat_num_tot[x, y] &lt;- val_tot[x, y]
-#     }
-#   }
-# }
-
-
-val_main_15 &lt;- (t(main_15[-c(2, 3, 6)]))
-
-des_15 &lt;- setNames(data.frame(matrix(ncol = ncol(val_main_15), nrow = nrow(val_main_15))), c(&quot;V1&quot;))
-colnames(des_15) &lt;- colnames(val_main_15)
-rownames(des_15) &lt;- rownames(val_main_15)
-
-for (x in 1 : ncol(val_main_15)) {
-for (y in 1 : nrow(val_main_15)) {
-  if (is.na(val_main_15[x,y]) == TRUE) {
-    des_15[x,y] &lt;- NA
-    } else {
-if (val_main_15[x,y] == &#39;MEH&#39;) {
-  des_15[x,y] &lt;- 0
-} else if (val_main_15[x,y] == &#39;JOY&#39;) {
-  des_15[x,y] &lt;- 1
-}   else if (val_main_15[x,y] == &#39;DESPAIR&#39;){
-    des_15[x,y] &lt;- neg_num(1)
-}      else {
-  des_15[x,y] &lt;- val_main_15[x,y]
-}}
-}
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gdmFsX21haW5fMTVbeCwgeV0gOiBzdWJzY3JpcHQgb3V0IG9mIGJvdW5kc1xuIn0= -->
-<pre><code>Error in val_main_15[x, y] : subscript out of bounds</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuXG52YWxfbWFpbl8xNiA8LSB0KG1haW5fMTZbLWMoMiwgMyw2KV0pXG5cblxuZGVzXzE2IDwtIHNldE5hbWVzKGRhdGEuZnJhbWUobWF0cml4KG5jb2wgPSBuY29sKHZhbF9tYWluXzE2KSwgbnJvdyA9IG5yb3codmFsX21haW5fMTYpKSksIGMoXFxWMVxcKSlcbmpveV8xNiA8LSBzZXROYW1lcyhkYXRhLmZyYW1lKG1hdHJpeChuY29sID0gbmNvbCh2YWxfbWFpbl8xNiksIG5yb3cgPSBucm93KHZhbF9tYWluXzE2KSkpLCBjKFxcVjFcXCkpXG5tZWhfMTYgPC0gc2V0TmFtZXMoZGF0YS5mcmFtZShtYXRyaXgobmNvbCA9IG5jb2wodmFsX21haW5fMTYpLCBucm93ID0gbnJvdyh2YWxfbWFpbl8xNikpKSwgYyhcXFYxXFwpKVxuXG5jb2xuYW1lcyhkZXNfMTYpIDwtIGNvbG5hbWVzKHZhbF9tYWluXzE2KVxucm93bmFtZXMoZGVzXzE2KSA8LSByb3duYW1lcyh2YWxfbWFpbl8xNilcbmNvbG5hbWVzKGpveV8xNikgPC0gY29sbmFtZXModmFsX21haW5fMTYpXG5yb3duYW1lcyhqb3lfMTYpIDwtIHJvd25hbWVzKHZhbF9tYWluXzE2KVxuY29sbmFtZXMobWVoXzE2KSA8LSBjb2xuYW1lcyh2YWxfbWFpbl8xNilcbnJvd25hbWVzKG1laF8xNikgPC0gcm93bmFtZXModmFsX21haW5fMTYpXG5cblxuZm9yICh4IGluIDEgOiBuY29sKHZhbF9tYWluXzE2KSkge1xuZm9yICh5IGluIDEgOiBucm93KHZhbF9tYWluXzE2KSkge1xuICBpZiAoaXMubmEodmFsX21haW5fMTZbeCx5XSkgPT0gVFJVRSkge1xuICAgIGRlc18xNlt4LHldIDwtIE5BO1xuICAgIGpveV8xNlt4LHldIDwtIE5BO1xuICAgIG1laF8xNlt4LHldIDwtIE5BXG4gICAgfSBlbHNlIHtcbmlmICh2YWxfbWFpbl8xNlt4LHldID09ICdNRUgnKSB7XG4gIGRlc18xNlt4LHldIDwtIDA7XG4gIGpveV8xNlt4LHldIDwtIDA7XG4gIG1laF8xNlt4LHldIDwtIDFcbn0gZWxzZSBpZiAodmFsX21haW5fMTZbeCx5XSA9PSAnSk9ZJykge1xuICBkZXNfMTZbeCx5XSA8LSAwO1xuICBqb3lfMTZbeCx5XSA8LSAxO1xuICBtZWhfMTZbeCx5XSA8LSAwXG59ICAgZWxzZSBpZiAodmFsX21haW5fMTZbeCx5XSA9PSAnREVTUEFJUicpe1xuICAgIGRlc18xNlt4LHldIDwtIDE7XG4gICAgam95XzE2W3gseV0gPC0gMDtcbiAgICBtZWhfMTZbeCx5XSA8LSAwXG59ICAgICAgZWxzZSB7XG4gIGRlc18xNlt4LHldIDwtIHZhbF9tYWluXzE2W3gseV07XG4gIGpveV8xNlt4LHldIDwtIHZhbF9tYWluXzE2W3gseV07XG4gIG1laF8xNlt4LHldIDwtIHZhbF9tYWluXzE2W3gseV1cbn19XG59XG59XG5gYGBcbmBgYCJ9 -->
-<pre class="r"><code>```r
-
-val_main_16 &lt;- t(main_16[-c(2, 3,6)])
-
-
-des_16 &lt;- setNames(data.frame(matrix(ncol = ncol(val_main_16), nrow = nrow(val_main_16))), c(\V1\))
-joy_16 &lt;- setNames(data.frame(matrix(ncol = ncol(val_main_16), nrow = nrow(val_main_16))), c(\V1\))
-meh_16 &lt;- setNames(data.frame(matrix(ncol = ncol(val_main_16), nrow = nrow(val_main_16))), c(\V1\))
-
-colnames(des_16) &lt;- colnames(val_main_16)
-rownames(des_16) &lt;- rownames(val_main_16)
-colnames(joy_16) &lt;- colnames(val_main_16)
-rownames(joy_16) &lt;- rownames(val_main_16)
-colnames(meh_16) &lt;- colnames(val_main_16)
-rownames(meh_16) &lt;- rownames(val_main_16)
-
-
-for (x in 1 : ncol(val_main_16)) {
-for (y in 1 : nrow(val_main_16)) {
-  if (is.na(val_main_16[x,y]) == TRUE) {
-    des_16[x,y] &lt;- NA;
-    joy_16[x,y] &lt;- NA;
-    meh_16[x,y] &lt;- NA
-    } else {
-if (val_main_16[x,y] == &#39;MEH&#39;) {
-  des_16[x,y] &lt;- 0;
-  joy_16[x,y] &lt;- 0;
-  meh_16[x,y] &lt;- 1
-} else if (val_main_16[x,y] == &#39;JOY&#39;) {
-  des_16[x,y] &lt;- 0;
-  joy_16[x,y] &lt;- 1;
-  meh_16[x,y] &lt;- 0
-}   else if (val_main_16[x,y] == &#39;DESPAIR&#39;){
-    des_16[x,y] &lt;- 1;
-    joy_16[x,y] &lt;- 0;
-    meh_16[x,y] &lt;- 0
-}      else {
-  des_16[x,y] &lt;- val_main_16[x,y];
-  joy_16[x,y] &lt;- val_main_16[x,y];
-  meh_16[x,y] &lt;- val_main_16[x,y]
-}}
-}
-}</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gdmFsX21haW5fMTZbeCwgeV0gOiBzdWJzY3JpcHQgb3V0IG9mIGJvdW5kc1xuIn0= --&gt;
-</code></pre>
-<p>Error in val_main_16[x, y] : subscript out of bounds</p>
-<pre><code>
-
-
-&lt;!-- rnb-output-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxudmFsX21haW5fMTcgPC0gdChtYWluXzE3Wy1jKDIsIDMsNildKVxuXG5cbmRlc18xNyA8LSBzZXROYW1lcyhkYXRhLmZyYW1lKG1hdHJpeChuY29sID0gbmNvbCh2YWxfbWFpbl8xNyksIG5yb3cgPSBucm93KHZhbF9tYWluXzE3KSkpLCBjKFxcVjFcXCkpXG5jb2xuYW1lcyhkZXNfMTcpIDwtIGNvbG5hbWVzKHZhbF9tYWluXzE3KVxucm93bmFtZXMoZGVzXzE3KSA8LSByb3duYW1lcyh2YWxfbWFpbl8xNylcblxuZm9yICh4IGluIDEgOiBuY29sKHZhbF9tYWluXzE3KSkge1xuZm9yICh5IGluIDEgOiBucm93KHZhbF9tYWluXzE3KSkge1xuICBpZiAoaXMubmEodmFsX21haW5fMTdbeCx5XSkgPT0gVFJVRSkge1xuICAgIGRlc18xN1t4LHldIDwtIE5BXG4gICAgfSBlbHNlIHtcbmlmICh2YWxfbWFpbl8xN1t4LHldID09ICdNRUgnKSB7XG4gIGRlc18xN1t4LHldIDwtIDBcbn0gZWxzZSBpZiAodmFsX21haW5fMTdbeCx5XSA9PSAnSk9ZJykge1xuICBkZXNfMTdbeCx5XSA8LSAxXG59ICAgZWxzZSBpZiAodmFsX21haW5fMTdbeCx5XSA9PSAnREVTUEFJUicpe1xuICAgIGRlc18xN1t4LHldIDwtIG5lZ19udW0oMSlcbiAgXG59ICAgICAgZWxzZSB7XG4gIGRlc18xN1t4LHldIDwtIHZhbF9tYWluXzE3W3gseV1cbn19XG59XG59XG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-val_main_17 &lt;- t(main_17[-c(2, 3,6)])
-
-
-des_17 &lt;- setNames(data.frame(matrix(ncol = ncol(val_main_17), nrow = nrow(val_main_17))), c(\V1\))
-colnames(des_17) &lt;- colnames(val_main_17)
-rownames(des_17) &lt;- rownames(val_main_17)
-
-for (x in 1 : ncol(val_main_17)) {
-for (y in 1 : nrow(val_main_17)) {
-  if (is.na(val_main_17[x,y]) == TRUE) {
-    des_17[x,y] &lt;- NA
-    } else {
-if (val_main_17[x,y] == &#39;MEH&#39;) {
-  des_17[x,y] &lt;- 0
-} else if (val_main_17[x,y] == &#39;JOY&#39;) {
-  des_17[x,y] &lt;- 1
-}   else if (val_main_17[x,y] == &#39;DESPAIR&#39;){
-    des_17[x,y] &lt;- neg_num(1)
-  
-}      else {
-  des_17[x,y] &lt;- val_main_17[x,y]
-}}
-}
-}</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gdmFsX21haW5fMTdbeCwgeV0gOiBzdWJzY3JpcHQgb3V0IG9mIGJvdW5kc1xuIn0= --&gt;
-</code></pre>
-<p>Error in val_main_17[x, y] : subscript out of bounds</p>
-<pre><code>
-
-
-&lt;!-- rnb-output-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-## Task 4 -  Question 6 - What was the most popular candy bar by this rating system for each gender in the dataset?
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2VuZF8xNl9yYXR0b3QgJT4lIGZpbHRlcihnZW5kZXIgPT0gXFxGZW1hbGVcXCkgJT4lIGFycmFuZ2UoKVxuXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-gend_16_rattot %&gt;% filter(gender == \Female\) %&gt;% arrange()
-</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IFByb2JsZW0gd2l0aCBgZmlsdGVyKClgIGlucHV0IGAuLjFgLlxuaSBJbnB1dCBgLi4xYCBpcyBgZ2VuZGVyID09IFxcRmVtYWxlXFxgLlxueCBvYmplY3QgJ2dlbmRlcicgbm90IGZvdW5kXG5SdW4gYHJsYW5nOjpsYXN0X2Vycm9yKClgIHRvIHNlZSB3aGVyZSB0aGUgZXJyb3Igb2NjdXJyZWQuXG4ifQ== --&gt;
-</code></pre>
-<p>Error: Problem with <code>filter()</code> input <code>..1</code>. i Input <code>..1</code> is <code>gender == \Female\</code>. x object ‘gender’ not found Run <code>rlang::last_error()</code> to see where the error occurred. ```</p>
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IFByb2JsZW0gd2l0aCBgc3VtbWFyaXNlKClgIGlucHV0IGAuLjFgLlxuaSBgLi4xID0gYWNyb3NzKHdoZXJlKC4sIFwiSk9ZXCIpKWAuXG54IHVudXNlZCBhcmd1bWVudCAoXCJKT1lcIilcbmkgVGhlIGVycm9yIG9jY3VycmVkIGluIGdyb3VwIDE6IGdlbmRlciA9IFwiRmVtYWxlXCIuXG5SdW4gYHJsYW5nOjpsYXN0X2Vycm9yKClgIHRvIHNlZSB3aGVyZSB0aGUgZXJyb3Igb2NjdXJyZWQuXG4ifQ== -->
+<pre><code>Error: Problem with `summarise()` input `..1`.
+i `..1 = across(where(., &quot;JOY&quot;))`.
+x unused argument (&quot;JOY&quot;)
+i The error occurred in group 1: gender = &quot;Female&quot;.
+Run `rlang::last_error()` to see where the error occurred.</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShoZXJlKQ0KbGlicmFyeShyZWFkeGwpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KG5hbmlhcikNCmxpYnJhcnkoamFuaXRvcikNCmBgYA0KDQpgYGB7cn0NCnJhd18xNSA8LSByZWFkX2NzdigiY2xlYW5fZGF0YS9jbGVhbl9tYWluXzE1LmNzdiIpDQpyYXdfMTYgPC0gcmVhZF9jc3YoImNsZWFuX2RhdGEvY2xlYW5fbWFpbl8xNi5jc3YiKQ0KcmF3XzE3IDwtIHJlYWRfY3N2KCJjbGVhbl9kYXRhL2NsZWFuX21haW5fMTcuY3N2IikNCg0KbWFpbl8xNSA8LSByYXdfMTUNCm1haW5fMTYgPC0gcmF3XzE2DQptYWluXzE3IDwtIHJhd18xNw0KYGBgDQoNCiMjIEZvciBjb25zaXN0ZW5jeSwgYWRkaW5nIGFkZGl0aW9uYWwgY29sdW1ucyAnZ2VuZGVyLCBjb3VudHJ5LCBjb3VudHknIHRvIG1haW5fMTUuDQpgYGB7cn0NCm1haW5fMTUkZ2VuZGVyIDwtIE5BDQptYWluXzE1JGNvdW50cnkgPC0gTkENCm1haW5fMTUkcHJvdmluY2Vfbl9jb3VudHkgPC0gTkENCg0KbWFpbl8xNSA8LSAgcmVsb2NhdGUobWFpbl8xNSxwcm92aW5jZV9uX2NvdW50eSwgLmFmdGVyID0gYWdlKQ0KbWFpbl8xNSA8LSAgcmVsb2NhdGUobWFpbl8xNSxjb3VudHJ5LCAuYWZ0ZXIgPSBhZ2UpDQptYWluXzE1IDwtICByZWxvY2F0ZShtYWluXzE1LGdlbmRlciwgLmFmdGVyID0gYWdlKQ0KYGBgDQoNCg0KDQojIyBUYXNrIDQgLSBRdWVzdGlvbiAxIC0gV2hhdCBpcyB0aGUgdG90YWwgbnVtYmVyIG9mIGNhbmR5IHJhdGluZ3MgZ2l2ZW4gYWNyb3NzIA0KIyMgdGhlIHRocmVlIHllYXJzIChFeGNsdWQuIE5BcykNCmBgYHtyfQ0KQ2FuZF9jb3VudF8yMDE1IDwtIHN1bSghaXMubmEobWFpbl8xNVs3Om5jb2wobWFpbl8xNSldKSkNCkNhbmRfY291bnRfMjAxNiA8LSBzdW0oIWlzLm5hKG1haW5fMTZbNzpuY29sKG1haW5fMTYpXSkpDQpDYW5kX2NvdW50XzIwMTcgPC0gc3VtKCFpcy5uYShtYWluXzE3Wzc6bmNvbChtYWluXzE3KV0pKQ0KQ2FuZF9jb3VudCA9IENhbmRfY291bnRfMjAxNStDYW5kX2NvdW50XzIwMTYrQ2FuZF9jb3VudF8yMDE3DQpDYW5kX2NvdW50DQpgYGANCg0KIyMgVGFzayA0IC0gUXVlc3Rpb24gMiAtIFdoYXQgd2FzIHRoZSBhdmVyYWdlIGFnZSBvZiBwZW9wbGUgd2hvIGFyZSBnb2luZyBvdXQgDQojIyB0cmljayBvciB0cmVhdGluZyBhbmQgdGhlIGF2ZXJhZ2UgYWdlIG9mIHBlb3BsZSBub3QgZ29pbmcgdHJpY2sgb3IgdHJlYXRpbmc/DQoNCmBgYHtyfQ0KdHJpX29fdHJlXzE1IDwtIHNlbGVjdChtYWluXzE1LCBjKGdvaW5nX291dCwgYWdlKSkNCnRyaV9vX3RyZV8xNiA8LSBzZWxlY3QobWFpbl8xNiwgYyhnb2luZ19vdXQsIGFnZSkpDQp0cmlfb190cmVfMTcgPC0gc2VsZWN0KG1haW5fMTcsIGMoZ29pbmdfb3V0LCBhZ2UpKQ0KDQp0cmlfb190cmVfdG90IDwtIHJiaW5kKHRyaV9vX3RyZV8xNywgdHJpX29fdHJlXzE2KQ0KICB0cmlfb190cmVfdG90IDwtIHJiaW5kICh0cmlfb190cmVfdG90LCB0cmlfb190cmVfMTUpICU+JSANCiAgZ3JvdXBfYnkoZ29pbmdfb3V0KSAlPiUNCiAgc3VtbWFyaXNlKGF2Z19hZ2UgPSBtZWFuKGFnZSwgbmEucm0gPSBUUlVFKSkgDQogIA0KbmFtZXModHJpX29fdHJlX3RvdClbbmFtZXModHJpX29fdHJlX3RvdCk9PSAiZ29pbmdfb3V0Il0gPC0gImdvaW5nX291dF90cmlja19vcl90cmVhdCINCnRyaV9vX3RyZV90b3QNCmBgYA0KIyMgVGFzayA0IC0gUXVlc3Rpb24gMyAtIEhvdyBtYW55IHBlb3BsZSByYXRlZCBTdGFyYnVyc3QgYXMgZGVzcGFpcj8NCg0KYGBge3J9DQojIENoZWNraW5nIHdoYXQgYXJlIHRoZSBkaWZmZXJlbmNlIGluIGNvbHVtbiBuYW1lcyBpbiB0aGUgMyBkYXRhZnJhbWVzLg0KIyBkaWZmX2NvbG5hbSA8LSBjb21wYXJlX2RmX2NvbHMobWFpbl8xNSwgbWFpbl8xNiwgbWFpbl8xNywgcmV0dXJuID0gIm1hdGNoIikgDQpuYW1lcyhtYWluXzE3KVtuYW1lcyhtYWluXzE3KT09ICJhbm9ueW1vdXNfYnJvd25fZ2xvYnNfdGhhdF9jb21lX2luX2JsYWNrX2FuZF9vcmFuZ2Vfd3JhcHBlcnNfYV9rX2FfbWFyeV9qYW5lcyJdIDwtICJhbm9ueW1vdXNfYnJvd25fZ2xvYnNfdGhhdF9jb21lX2luX2JsYWNrX2FuZF9vcmFuZ2Vfd3JhcHBlcnMiDQpuYW1lcyhtYWluXzE3KVtuYW1lcyhtYWluXzE3KT09ICIxMDBfZ3JhbmRfYmFyIl0gPC0gIngxMDBfZ3JhbmRfYmFyIg0KbmFtZXMobWFpbl8xNSlbbmFtZXMobWFpbl8xNSk9PSAiYm94X29fcmFpc2lucyJdIDwtICJib3hvX3JhaXNpbnMiDQoNCg0KI01lcmdlIERhdGFmcmFtZXMNCm1haW5fdG90IDwtIG1lcmdlKG1haW5fMTcsIG1haW5fMTYsIGFsbCA9IFRSVUUpDQptYWluX3RvdCA8LSBtZXJnZShtYWluX3RvdCwgbWFpbl8xNSwgYWxsID0gVFJVRSkNCg0KcmF0aW5nX2NvdW50IDwtIG1haW5fdG90WzQ6bmNvbChtYWluX3RvdCldICU+JSANCiAgc3VtbWFyaXNlX2FsbCh+IHN1bSghaXMubmEoLikpKQ0KDQpyYXRpbmdfY291bnQgPC0gYXMuZGF0YS5mcmFtZSh0KHJhdGluZ19jb3VudCkpDQoNCiNleHRyYWN0IHJvd25hbWVzIHRoZW4gam9pbiByYXRpbmdfY291bnQgYXMgY29sdW1uDQpzd2VldF9uYW1lIDwtIHN0cl90b190aXRsZShyb3duYW1lcyhyYXRpbmdfY291bnQpKQ0Kcm93bmFtZXMocmF0aW5nX2NvdW50KSA8LSBOVUxMDQpyYXRpbmdfY291bnQgPC0gY2JpbmQoc3dlZXRfbmFtZSwgcmF0aW5nX2NvdW50KQ0KDQojcmVtb3ZlIHJvd25hbWUNCg0KDQpjb2xuYW1lcyhyYXRpbmdfY291bnQpWzFdIDwtICJzd2VldF9uYW1lIg0KY29sbmFtZXMocmF0aW5nX2NvdW50KVsyXSA8LSAicmF0aW5nIg0KDQpNYXhfcmF0aW5nX3N3ZWV0IDwtIHNsaWNlX21heChyYXRpbmdfY291bnQsIHJhdGluZykNCk1heF9yYXRpbmdfc3dlZXQNCmBgYA0KDQojIyBUYXNrIDQgLSBRdWVzdGlvbiA0IC0gSG93IG1hbnkgcGVvcGxlIHJhdGVkIFN0YXJidXJzdCBhcyBkZXNwYWlyPw0KYGBge3J9DQpzdGFyX2Rlc3BhaXIgPC0gbWFpbl90b3QgJT4lIA0KICAgIGZpbHRlcihzdGFyYnVyc3QgPT0gIkRFU1BBSVIiKQ0KDQpucm93KHN0YXJfZGVzcGFpcikNCmBgYA0KDQoNCiMjIChVbmZpbmlzaClUYXNrIDQgLSBRdWVzdGlvbiA1IC0gRm9yIHRoZSBuZXh0IHRocmVlIHF1ZXN0aW9ucywgY291bnQgZGVzcGFpciBhcyAtMSwgam95IGFzICsxIGFuZCBtZWggYXMgMC4NCg0KDQpgYGB7cn0NCm5lZ19udW0gPC0gZnVuY3Rpb24oeCkgLTEqYWJzKHgpDQoNCmBgYA0KDQpgYGB7cn0NCiMgdmFsX3RvdCA8LSB0KHZhbF90b3QpDQojIA0KIyByYXRfbnVtX3RvdCA8LSBzZXROYW1lcyhkYXRhLmZyYW1lKG1hdHJpeChuY29sID0gbmNvbCh2YWxfdG90KSwgbnJvdyA9IG5yb3codmFsX3RvdCkpKSwgYygiVjEiKSkNCiMgY29sbmFtZXMocmF0X251bV90b3QpIDwtIGNvbG5hbWVzKHZhbF90b3QpDQojIHJvd25hbWVzKHJhdF9udW1fdG90KSA8LSByb3duYW1lcyh2YWxfdG90KQ0KIyANCiMgZm9yICh4IGluIDE6bmNvbCh2YWxfdG90KSkgew0KIyAgIGZvciAoeSBpbiAxOm5yb3codmFsX3RvdCkpIHsNCiMgICAgIGlmIChpcy5uYSh2YWxfdG90W3gsIHldKSA9PSBUUlVFIHx8IGlzLm51bGwodmFsX3RvdFt4LHldKSA9PSBUUlVFKSB7DQojICAgICAgIHJhdF9udW1fdG90W3gsIHldIDwtIE5BDQojICAgICB9IGVsc2UgaWYgKHZhbF90b3RbeCwgeV0gPT0gJ01FSCcpIHsNCiMgICAgICAgcmF0X251bV90b3RbeCwgeV0gPC0gMA0KIyAgICAgfSBlbHNlIGlmICh2YWxfdG90W3gsIHldID09ICdKT1knKSB7DQojICAgICAgICByYXRfbnVtX3RvdFt4LCB5XSA8LSAxICAgICANCiMgICAgIH0gICBlbHNlIGlmICh2YWxfdG90W3gsIHldID09ICdERVNQQUlSJykgew0KIyAgICAgICByYXRfbnVtX3RvdFt4LCB5XSA8LSBuZWdfbnVtKDEpDQojICAgICB9ICAgICAgZWxzZSB7DQojICAgICAgIHJhdF9udW1fdG90W3gsIHldIDwtIHZhbF90b3RbeCwgeV0NCiMgICAgIH0NCiMgICB9DQojIH0NCg0KDQp2YWxfbWFpbl8xNSA8LSAodChtYWluXzE1Wy1jKDIsIDMsIDYpXSkpDQoNCmRlc18xNSA8LSBzZXROYW1lcyhkYXRhLmZyYW1lKG1hdHJpeChuY29sID0gbmNvbCh2YWxfbWFpbl8xNSksIG5yb3cgPSBucm93KHZhbF9tYWluXzE1KSkpLCBjKCJWMSIpKQ0KY29sbmFtZXMoZGVzXzE1KSA8LSBjb2xuYW1lcyh2YWxfbWFpbl8xNSkNCnJvd25hbWVzKGRlc18xNSkgPC0gcm93bmFtZXModmFsX21haW5fMTUpDQoNCmZvciAoeCBpbiAxIDogbmNvbCh2YWxfbWFpbl8xNSkpIHsNCmZvciAoeSBpbiAxIDogbnJvdyh2YWxfbWFpbl8xNSkpIHsNCiAgaWYgKGlzLm5hKHZhbF9tYWluXzE1W3gseV0pID09IFRSVUUpIHsNCiAgICBkZXNfMTVbeCx5XSA8LSBOQQ0KICAgIH0gZWxzZSB7DQppZiAodmFsX21haW5fMTVbeCx5XSA9PSAnTUVIJykgew0KICBkZXNfMTVbeCx5XSA8LSAwDQp9IGVsc2UgaWYgKHZhbF9tYWluXzE1W3gseV0gPT0gJ0pPWScpIHsNCiAgZGVzXzE1W3gseV0gPC0gMQ0KfSAgIGVsc2UgaWYgKHZhbF9tYWluXzE1W3gseV0gPT0gJ0RFU1BBSVInKXsNCiAgICBkZXNfMTVbeCx5XSA8LSBuZWdfbnVtKDEpDQp9ICAgICAgZWxzZSB7DQogIGRlc18xNVt4LHldIDwtIHZhbF9tYWluXzE1W3gseV0NCn19DQp9DQp9DQoNCg0KYGBgDQoNCmBgYHtyfQ0KDQp2YWxfbWFpbl8xNiA8LSB0KG1haW5fMTZbLWMoMiwgMyw2KV0pDQoNCg0KZGVzXzE2IDwtIHNldE5hbWVzKGRhdGEuZnJhbWUobWF0cml4KG5jb2wgPSBuY29sKHZhbF9tYWluXzE2KSwgbnJvdyA9IG5yb3codmFsX21haW5fMTYpKSksIGMoIlYxIikpDQpqb3lfMTYgPC0gc2V0TmFtZXMoZGF0YS5mcmFtZShtYXRyaXgobmNvbCA9IG5jb2wodmFsX21haW5fMTYpLCBucm93ID0gbnJvdyh2YWxfbWFpbl8xNikpKSwgYygiVjEiKSkNCm1laF8xNiA8LSBzZXROYW1lcyhkYXRhLmZyYW1lKG1hdHJpeChuY29sID0gbmNvbCh2YWxfbWFpbl8xNiksIG5yb3cgPSBucm93KHZhbF9tYWluXzE2KSkpLCBjKCJWMSIpKQ0KDQpjb2xuYW1lcyhkZXNfMTYpIDwtIGNvbG5hbWVzKHZhbF9tYWluXzE2KQ0Kcm93bmFtZXMoZGVzXzE2KSA8LSByb3duYW1lcyh2YWxfbWFpbl8xNikNCmNvbG5hbWVzKGpveV8xNikgPC0gY29sbmFtZXModmFsX21haW5fMTYpDQpyb3duYW1lcyhqb3lfMTYpIDwtIHJvd25hbWVzKHZhbF9tYWluXzE2KQ0KY29sbmFtZXMobWVoXzE2KSA8LSBjb2xuYW1lcyh2YWxfbWFpbl8xNikNCnJvd25hbWVzKG1laF8xNikgPC0gcm93bmFtZXModmFsX21haW5fMTYpDQoNCg0KZm9yICh4IGluIDEgOiBuY29sKHZhbF9tYWluXzE2KSkgew0KZm9yICh5IGluIDEgOiBucm93KHZhbF9tYWluXzE2KSkgew0KICBpZiAoaXMubmEodmFsX21haW5fMTZbeCx5XSkgPT0gVFJVRSkgew0KICAgIGRlc18xNlt4LHldIDwtIE5BOw0KICAgIGpveV8xNlt4LHldIDwtIE5BOw0KICAgIG1laF8xNlt4LHldIDwtIE5BDQogICAgfSBlbHNlIHsNCmlmICh2YWxfbWFpbl8xNlt4LHldID09ICdNRUgnKSB7DQogIGRlc18xNlt4LHldIDwtIDA7DQogIGpveV8xNlt4LHldIDwtIDA7DQogIG1laF8xNlt4LHldIDwtIDENCn0gZWxzZSBpZiAodmFsX21haW5fMTZbeCx5XSA9PSAnSk9ZJykgew0KICBkZXNfMTZbeCx5XSA8LSAwOw0KICBqb3lfMTZbeCx5XSA8LSAxOw0KICBtZWhfMTZbeCx5XSA8LSAwDQp9ICAgZWxzZSBpZiAodmFsX21haW5fMTZbeCx5XSA9PSAnREVTUEFJUicpew0KICAgIGRlc18xNlt4LHldIDwtIDE7DQogICAgam95XzE2W3gseV0gPC0gMDsNCiAgICBtZWhfMTZbeCx5XSA8LSAwDQp9ICAgICAgZWxzZSB7DQogIGRlc18xNlt4LHldIDwtIHZhbF9tYWluXzE2W3gseV07DQogIGpveV8xNlt4LHldIDwtIHZhbF9tYWluXzE2W3gseV07DQogIG1laF8xNlt4LHldIDwtIHZhbF9tYWluXzE2W3gseV0NCn19DQp9DQp9DQoNCmBgYA0KYGBge3J9DQp2YWxfbWFpbl8xNyA8LSB0KG1haW5fMTdbLWMoMiwgMyw2KV0pDQoNCg0KZGVzXzE3IDwtIHNldE5hbWVzKGRhdGEuZnJhbWUobWF0cml4KG5jb2wgPSBuY29sKHZhbF9tYWluXzE3KSwgbnJvdyA9IG5yb3codmFsX21haW5fMTcpKSksIGMoIlYxIikpDQpjb2xuYW1lcyhkZXNfMTcpIDwtIGNvbG5hbWVzKHZhbF9tYWluXzE3KQ0Kcm93bmFtZXMoZGVzXzE3KSA8LSByb3duYW1lcyh2YWxfbWFpbl8xNykNCg0KZm9yICh4IGluIDEgOiBuY29sKHZhbF9tYWluXzE3KSkgew0KZm9yICh5IGluIDEgOiBucm93KHZhbF9tYWluXzE3KSkgew0KICBpZiAoaXMubmEodmFsX21haW5fMTdbeCx5XSkgPT0gVFJVRSkgew0KICAgIGRlc18xN1t4LHldIDwtIE5BDQogICAgfSBlbHNlIHsNCmlmICh2YWxfbWFpbl8xN1t4LHldID09ICdNRUgnKSB7DQogIGRlc18xN1t4LHldIDwtIDANCn0gZWxzZSBpZiAodmFsX21haW5fMTdbeCx5XSA9PSAnSk9ZJykgew0KICBkZXNfMTdbeCx5XSA8LSAxDQp9ICAgZWxzZSBpZiAodmFsX21haW5fMTdbeCx5XSA9PSAnREVTUEFJUicpew0KICAgIGRlc18xN1t4LHldIDwtIG5lZ19udW0oMSkNCiAgDQp9ICAgICAgZWxzZSB7DQogIGRlc18xN1t4LHldIDwtIHZhbF9tYWluXzE3W3gseV0NCn19DQp9DQp9DQpgYGANCiMjIFRhc2sgNCAtICBRdWVzdGlvbiA2IC0gV2hhdCB3YXMgdGhlIG1vc3QgcG9wdWxhciBjYW5keSBiYXIgYnkgdGhpcyByYXRpbmcgc3lzdGVtIGZvciBlYWNoIGdlbmRlciBpbiB0aGUgZGF0YXNldD8NCmBgYHtyfQ0KZ2VuZF9kZXNfMTYgPC0gZGVzXzE2Wy1jKDEsMyksXQ0KZ2VuZF9qb3lfMTYgPC0gam95XzE2Wy1jKDEsMyksXQ0KZ2VuZF9tZWhfMTYgPC0gbWVoXzE2Wy1jKDEsMyksXQ0KDQpnZW5kX2Rlc18xNiA8LSBhcy5kYXRhLmZyYW1lKHQoZ2VuZF9kZXNfMTYpKQ0KZ2VuZF9qb3lfMTYgPC0gYXMuZGF0YS5mcmFtZSh0KGdlbmRfam95XzE2KSkNCmdlbmRfbWVoXzE2IDwtIGFzLmRhdGEuZnJhbWUodChnZW5kX21laF8xNikpDQoNCmdlbmRfZGVzXzE2WzI6bmNvbChnZW5kX2Rlc18xNildIDwtIGFzLm51bWVyaWModW5saXN0KGdlbmRfZGVzXzE2WzI6bmNvbChnZW5kX2Rlc18xNildKSkNCmdlbmRfam95XzE2WzI6bmNvbChnZW5kX2pveV8xNildIDwtIGFzLm51bWVyaWModW5saXN0KGdlbmRfam95XzE2WzI6bmNvbChnZW5kX2pveV8xNildKSkNCmdlbmRfbWVoXzE2WzI6bmNvbChnZW5kX21laF8xNildIDwtIGFzLm51bWVyaWModW5saXN0KGdlbmRfbWVoXzE2WzI6bmNvbChnZW5kX21laF8xNildKSkNCg0KDQpnZW5kXzE2X2pveXJhdCA8LSBnZW5kX2pveV8xNiAlPiUgDQogIGdyb3VwX2J5KGdlbmRlcikgJT4lDQogIHN1bW1hcmlzZV9hbGwoc3VtLCBuYS5ybT1UUlVFKQ0KDQpnZW5kXzE2X21laCA8LSBnZW5kX21laF8xNiAlPiUgDQogIGdyb3VwX2J5KGdlbmRlcikgJT4lDQogIHN1bW1hcmlzZV9hbGwoc3VtLCBuYS5ybT1UUlVFKQ0KDQpnZW5kXzE2X2Rlc3JhdCA8LSBnZW5kX2Rlc18xNiAlPiUgDQogIGdyb3VwX2J5KGdlbmRlcikgJT4lDQogIHN1bW1hcmlzZV9hbGwoc3VtLCBuYS5ybT1UUlVFKQ0KZ2VuZF8xNl9kZXNyYXRbMjpuY29sKGdlbmRfMTZfZGVzcmF0KV0gPC0gKGdlbmRfMTZfZGVzcmF0WzI6bmNvbChnZW5kXzE2X2Rlc3JhdCldKi0xKQ0KDQoNCmdlbmRfMTZfcmF0dG90IDwtIHNldE5hbWVzKGRhdGEuZnJhbWUobWF0cml4KG5jb2wgPSBuY29sKGdlbmRfMTZfam95cmF0KSwgbnJvdyA9IG5yb3coZ2VuZF8xNl9qb3lyYXQpKSksIGMoIlYxIikpDQoNCmNvbG5hbWVzKGdlbmRfMTZfcmF0dG90KSA8LSBjb2xuYW1lcyhnZW5kXzE2X2pveXJhdCkNCnJvd25hbWVzKGdlbmRfMTZfcmF0dG90KSA8LSByb3duYW1lcyhnZW5kXzE2X2pveXJhdCkNCmdlbmRfMTZfcmF0dG90WywxXSA8LSBnZW5kXzE2X2pveXJhdFssMV0NCg0KZm9yICh4IGluIDIgOiBuY29sKGdlbmRfMTZfam95cmF0KSkgew0KZm9yICh5IGluIDEgOiBucm93KGdlbmRfMTZfam95cmF0KS0xKSB7DQogIGdlbmRfMTZfcmF0dG90W3kseF0gPC0gZ2VuZF8xNl9qb3lyYXRbeSx4XSArIGdlbmRfMTZfZGVzcmF0W3kseF0NCn0NCn0NCmdlbmRfMTZfcmF0dG90IDwtIGdlbmRfMTZfcmF0dG90Wy1jKDUpLF0NCiAgcm93bmFtZXMoZ2VuZF8xNl9yYXR0b3QpIDwtIGdlbmRfMTZfcmF0dG90WywxXSANCiAgZ2VuZF8xNl9yYXR0b3RbLDFdIDwtIE5VTEwNCiAgDQoNCmdlbmRfMTZfcmF0dG90ICU+JSBmaWx0ZXIoZ2VuZGVyID09ICJGZW1hbGUiKSAlPiUgYXJyYW5nZSgpDQogIA0KYGBgDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShoZXJlKQ0KbGlicmFyeShyZWFkeGwpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KG5hbmlhcikNCmxpYnJhcnkoamFuaXRvcikNCmBgYA0KDQpgYGB7cn0NCmNsZWFuXzE1IDwtIHJlYWRfY3N2KCJjbGVhbl9kYXRhL2NsZWFuX21haW5fMTUuY3N2IikNCmNsZWFuXzE2IDwtIHJlYWRfY3N2KCJjbGVhbl9kYXRhL2NsZWFuX21haW5fMTYuY3N2IikNCmNsZWFuXzE3IDwtIHJlYWRfY3N2KCJjbGVhbl9kYXRhL2NsZWFuX21haW5fMTcuY3N2IikNCg0KbWFpbl8xNSA8LSBjbGVhbl8xNQ0KbWFpbl8xNiA8LSBjbGVhbl8xNg0KbWFpbl8xNyA8LSBjbGVhbl8xNw0KbWFpbl90b3QgPC0gYmluZF9yb3dzKG1haW5fMTUsIG1haW5fMTYpICU+JQ0KICBiaW5kX3Jvd3MobWFpbl8xNykNCmBgYA0KDQoNCiMjIFRhc2sgNCAtIFF1ZXN0aW9uIDEgLSBXaGF0IGlzIHRoZSB0b3RhbCBudW1iZXIgb2YgY2FuZHkgcmF0aW5ncyBnaXZlbiBhY3Jvc3MgDQojIyB0aGUgdGhyZWUgeWVhcnMgKEV4Y2x1ZC4gTkFzKQ0KYGBge3J9DQpDYW5kX2NvdW50XzIwMTUgPC0gc3VtKCFpcy5uYShtYWluXzE1Wzc6bmNvbChtYWluXzE1KV0pKQ0KQ2FuZF9jb3VudF8yMDE2IDwtIHN1bSghaXMubmEobWFpbl8xNls3Om5jb2wobWFpbl8xNildKSkNCkNhbmRfY291bnRfMjAxNyA8LSBzdW0oIWlzLm5hKG1haW5fMTdbNzpuY29sKG1haW5fMTcpXSkpDQpDYW5kX2NvdW50ID0gQ2FuZF9jb3VudF8yMDE1K0NhbmRfY291bnRfMjAxNitDYW5kX2NvdW50XzIwMTcNCkNhbmRfY291bnQNCmBgYA0KDQojIyBUYXNrIDQgLSBRdWVzdGlvbiAyIC0gV2hhdCB3YXMgdGhlIGF2ZXJhZ2UgYWdlIG9mIHBlb3BsZSB3aG8gYXJlIGdvaW5nIG91dCANCiMjIHRyaWNrIG9yIHRyZWF0aW5nIGFuZCB0aGUgYXZlcmFnZSBhZ2Ugb2YgcGVvcGxlIG5vdCBnb2luZyB0cmljayBvciB0cmVhdGluZz8NCg0KYGBge3J9DQp0cmlfb190cmVfMTUgPC0gc2VsZWN0KG1haW5fMTUsIGMoZ29pbmdfb3V0LCBhZ2UpKQ0KdHJpX29fdHJlXzE2IDwtIHNlbGVjdChtYWluXzE2LCBjKGdvaW5nX291dCwgYWdlKSkNCnRyaV9vX3RyZV8xNyA8LSBzZWxlY3QobWFpbl8xNywgYyhnb2luZ19vdXQsIGFnZSkpDQoNCnRyaV9vX3RyZV90b3QgPC0gcmJpbmQodHJpX29fdHJlXzE3LCB0cmlfb190cmVfMTYpDQogIHRyaV9vX3RyZV90b3QgPC0gcmJpbmQgKHRyaV9vX3RyZV90b3QsIHRyaV9vX3RyZV8xNSkgJT4lIA0KICBncm91cF9ieShnb2luZ19vdXQpICU+JQ0KICBzdW1tYXJpc2UoYXZnX2FnZSA9IG1lYW4oYWdlLCBuYS5ybSA9IFRSVUUpKSANCiAgDQpuYW1lcyh0cmlfb190cmVfdG90KVtuYW1lcyh0cmlfb190cmVfdG90KT09ICJnb2luZ19vdXQiXSA8LSAiZ29pbmdfb3V0X3RyaWNrX29yX3RyZWF0Ig0KdHJpX29fdHJlX3RvdA0KYGBgDQojIyBUYXNrIDQgLSBRdWVzdGlvbiAzIC0gSG93IG1hbnkgcGVvcGxlIHJhdGVkIFN0YXJidXJzdCBhcyBkZXNwYWlyPw0KDQpgYGB7cn0NCiMgQ2hlY2tpbmcgd2hhdCBhcmUgdGhlIGRpZmZlcmVuY2UgaW4gY29sdW1uIG5hbWVzIGluIHRoZSAzIGRhdGFmcmFtZXMuDQojIGRpZmZfY29sbmFtIDwtIGNvbXBhcmVfZGZfY29scyhtYWluXzE1LCBtYWluXzE2LCBtYWluXzE3LCByZXR1cm4gPSAibWF0Y2giKSANCm5hbWVzKG1haW5fMTcpW25hbWVzKG1haW5fMTcpPT0gImFub255bW91c19icm93bl9nbG9ic190aGF0X2NvbWVfaW5fYmxhY2tfYW5kX29yYW5nZV93cmFwcGVyc19hX2tfYV9tYXJ5X2phbmVzIl0gPC0gImFub255bW91c19icm93bl9nbG9ic190aGF0X2NvbWVfaW5fYmxhY2tfYW5kX29yYW5nZV93cmFwcGVycyINCm5hbWVzKG1haW5fMTcpW25hbWVzKG1haW5fMTcpPT0gIjEwMF9ncmFuZF9iYXIiXSA8LSAieDEwMF9ncmFuZF9iYXIiDQpuYW1lcyhtYWluXzE1KVtuYW1lcyhtYWluXzE1KT09ICJib3hfb19yYWlzaW5zIl0gPC0gImJveG9fcmFpc2lucyINCg0KDQojTWVyZ2UgRGF0YWZyYW1lcw0KbWFpbl90b3QgPC0gbWVyZ2UobWFpbl8xNywgbWFpbl8xNiwgYWxsID0gVFJVRSkNCm1haW5fdG90IDwtIG1lcmdlKG1haW5fdG90LCBtYWluXzE1LCBhbGwgPSBUUlVFKQ0KDQpyYXRpbmdfY291bnQgPC0gbWFpbl90b3RbNDpuY29sKG1haW5fdG90KV0gJT4lIA0KICBzdW1tYXJpc2VfYWxsKH4gc3VtKCFpcy5uYSguKSkpDQoNCnJhdGluZ19jb3VudCA8LSBhcy5kYXRhLmZyYW1lKHQocmF0aW5nX2NvdW50KSkNCg0KI2V4dHJhY3Qgcm93bmFtZXMgdGhlbiBqb2luIHJhdGluZ19jb3VudCBhcyBjb2x1bW4NCnN3ZWV0X25hbWUgPC0gc3RyX3RvX3RpdGxlKHJvd25hbWVzKHJhdGluZ19jb3VudCkpDQpyb3duYW1lcyhyYXRpbmdfY291bnQpIDwtIE5VTEwNCnJhdGluZ19jb3VudCA8LSBjYmluZChzd2VldF9uYW1lLCByYXRpbmdfY291bnQpDQoNCiNyZW1vdmUgcm93bmFtZQ0KDQoNCmNvbG5hbWVzKHJhdGluZ19jb3VudClbMV0gPC0gInN3ZWV0X25hbWUiDQpjb2xuYW1lcyhyYXRpbmdfY291bnQpWzJdIDwtICJyYXRpbmciDQoNCk1heF9yYXRpbmdfc3dlZXQgPC0gc2xpY2VfbWF4KHJhdGluZ19jb3VudCwgcmF0aW5nKQ0KTWF4X3JhdGluZ19zd2VldA0KYGBgDQoNCiMjIFRhc2sgNCAtIFF1ZXN0aW9uIDQgLSBIb3cgbWFueSBwZW9wbGUgcmF0ZWQgU3RhcmJ1cnN0IGFzIGRlc3BhaXI/DQpgYGB7cn0NCnN0YXJfZGVzcGFpciA8LSBtYWluX3RvdCAlPiUgDQogICAgZmlsdGVyKHN0YXJidXJzdCA9PSAiREVTUEFJUiIpDQoNCm5yb3coc3Rhcl9kZXNwYWlyKQ0KYGBgDQoNCg0KIyMgRm9yIHRoZSBuZXh0IHRocmVlIHF1ZXN0aW9ucywgY291bnQgZGVzcGFpciBhcyAtMSwgam95IGFzICsxIGFuZCBtZWggYXMgMC4NCiMjIFRhc2sgNCAtIFF1ZXN0aW9uIDYgLSBXaGF0IHdhcyB0aGUgbW9zdCBwb3B1bGFyIGNhbmR5IGJhciBieSB0aGlzIHJhdGluZyBzeXN0ZW0gZm9yIGVhY2ggZ2VuZGVyIGluIHRoZSBkYXRhc2V0Pw0KYGBge3J9DQpyYXRpbmdfdG90IDwtIG1haW5fdG90ICU+JQ0KICBzZWxlY3QoLWMoeWVhciwgZ29pbmdfb3V0LCBhZ2UsIGNvdW50cnkpKSAlPiUNCiAgZ3JvdXBfYnkoZ2VuZGVyKSAlPiUNCiAgc3VtbWFyaXNlKGFjcm9zcyh3aGVyZSguLCJKT1kiKSksbmEucm0gPSBUUlVFKQ0KDQojIHJhdGluZ19qb3kgPC0gcmF0aW5nX3RvdA0KIyANCiMgZm9yKHkgaW4gMjpuY29sKHJhdGluZ19qb3kpKSB7DQojICAgZm9yICh6IGluIDE6bnJvdyhyYXRpbmdfam95KSkgew0KIyAgICAgcmF0aW5nX2pveVt6LCB5XSA8LQ0KIyAgICAgICBsYXBwbHkocmF0aW5nX2pveVt6LCB5XSwgZnVuY3Rpb24oeCkNCiMgICAgICAgICByZXBsYWNlKHgsIHggIT0gIkpPWSIsIE5BKSkNCiMgICB9DQojIH0NCg0KDQoNCmBgYA0KDQo=</div>
 
 
 
