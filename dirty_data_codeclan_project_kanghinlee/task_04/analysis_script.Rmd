@@ -99,7 +99,9 @@ nrow(star_despair)
 ```{r}
 rating_tot <- main_tot %>%
   select(-c(year, going_out, age, country)) %>%
-  group_by(gender) %>%
+  group_by(gender)
+
+
   summarise(across(where(.,"JOY")),na.rm = TRUE)
 
 # rating_joy <- rating_tot
