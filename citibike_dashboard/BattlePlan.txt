@@ -1,0 +1,114 @@
+10 sample bikes
+
+Aim: How it can provide actionable insights to the business for NYC Citi Bike
+How it is relates to key performance indicators (Overall objective is to increase bike hires)
+description and interpretation of each plot to explain the context and insights.
+
+What is the pattern of bike hires over time (e.g. within a year, month, week, or day)? DONE
+Do bike hire patterns differ between bike rider demographics? (e.g. gender, type of trip, age)? DONE
+Any other insights?
+
+
+
+General Graph showing trending per year, and per month
+Line graph showing trending per year
+Bar Graph showing trending per month
+
+Subscriber vs Customer (trip duration) Male & Female
+
+
+Bike usage Monday - Friday
+
+Catagory bike trip into different catagories (Short, Medium, Long)
+
+Spider graph showing 
+Cycle to work or 
+
+age range vs hire vs duration
+
+
+Product:
+Over 1000 Stations
+19'000 bikes acr
+
+Normal Bike
+first 45 mins is free for Annual Members, 
+first 30 mins is free for Day pass, 3 day pass users
+
+Ebike
+extra $0.18/min
+
+Point system:
+Find a 
+
+Annual Membership $15.00/month or ($179 per year annual payment)
+Single Ride $3.50 / 30 mins
+Day Pass - $15 /day
+
+Extra $4 each additional 15 mins, alternatively, can park biks each 30 mins
+
+
+Promotion :
+Seasonal discount:-> 
+discount during low hiring period (per season or per hours (tourist))
+group hiring discount at hostel spot (cycling tour promotion)
+
+To make it more convienient for the current user
+cashback when return bike to designated area to aviod fully parked parking space
+apptrace to tell user the capacity of the station
+
+Ride a Bike in cold days will provide additional points
+Ride a bike to coffee shops for a discounted coffee
+
+
+
+1 Introduction
+
+1.1 The Plan --DONE--
+1.2 Business Requirements --DONE--
+
+2. The Company --DONE--
+2.1 An Overview
+2.2 Key Performance Indicator (KPI) --DONE--
+2.2.1 Bike Angels  --DONE--
+
+
+3. The Dataset
+3.1 Business Flow Chart
+- how company collect and form dataset
+
+4. Analysis
+4.1 Data Overview
+- Dataset description
+- Bike samples count and location
+
+4.1.1 Gender Ratio & User Type
+- unbiassss analysis, less targeting more general assumptions
+
+4.2 Rental Duration
+4.2.1 Overview
+4.2.2 User Type vs. Rental Duration
+
+4.3 Bike Hire Count
+4.3.1 Overview
+4.3.2 User Type vs. Bike Hiring Count
+
+4.4 Additional Insights
+4.4.1 Average Bike Hire Count vs Temperature Range
+4.4.2 Recommandation
+
+5. Conclusion
+
+
+
+mindset towards self progression and leanrin,
+cover letter to show what you could bnring to the company 
+dont be afraid to say what you dont know
+
+transferable skills:
+problem solving
+handle challenges
+adapbilty
+push themsleve outside comfort zone
+
+instructment the code (know the code behavour and how it works)

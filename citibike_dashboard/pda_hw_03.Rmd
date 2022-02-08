@@ -1,0 +1,505 @@
+---
+title: "PDA Project 03 - CitiBike 2018 Report"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    pdf_document: default
+    code_folding: hide
+---
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+library(tidyverse)
+library(infer)
+library(janitor)
+library(lubridate)
+library(tsibble)
+library(tsibbledata)
+library(ggpmisc)
+library(sf)
+library(leaflet)
+
+knitr::opts_chunk$set(echo = FALSE)
+nyc_bikes_df <- nyc_bikes
+temp_2018 <- clean_names(readxl::read_xlsx("data/nyc_2018_temp.xlsx")) %>% 
+  mutate(min = weathermetrics::fahrenheit.to.celsius(min),
+         max = weathermetrics::fahrenheit.to.celsius(max),
+         avg = weathermetrics::fahrenheit.to.celsius(avg))
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+# Clean Data
+bike_main <- as_tibble( nyc_bikes_df) %>% 
+  ungroup() %>% 
+    mutate(duration = round(stop_time - start_time, digits = 2),
+           weekdays = weekdays(start_time, abbr = TRUE)
+           ) %>% 
+  mutate(is_weekend = ifelse(weekdays == c("Sat", "Sun"),"weekend", "weekday")) %>% 
+  relocate(end_station, .before = start_lat) %>% 
+  relocate(end_lat, .before = start_long) %>% 
+  relocate(bike_id, .after = end_long) %>% 
+  mutate(month = month(ymd_hms(start_time), label = TRUE, abbr = TRUE))
+```
+
+
+# 1. The Report
+
+## 1.1 Introduction
+The purpose of this report is to provide a brief insight and recommendation to improve the Citibike's key performance indicator (KPI) through analysis of the dataset. In order to provide a meaningful recommendation, the report provided an overview of the company to understand the how it operates and the current offers to their clients. The analysis plan focused on the business requirements as the main objectives. The analysis process used the dataset Citibike provided, *nyc_bikes*, and tailored with the company's information. The results are then being used for analysis including a recommdation for improving the company's KPI.
+
+
+## 1.2 Business Requirements
+
+The business requirements are listed below:
+
+* What is the pattern of bike hires over time (e.g. within a year, month, week, or day)?
+* Do bike hire patterns differ between bike rider demographics? (e.g. gender, type of trip, age)
+* Additional insights?
+
+
+
+# 2. The Company
+# 2.1 An Overview
+```{r, echo=FALSE, out.width="75%", fig.cap="Fig 1 - Citibike Logo"}
+knitr::include_graphics("../pda_homework_03/image/citilogo.png")
+```
+
+[Citibike](https://help.citibikenyc.com/hc/en-us) is a privately owned bike hiring service deployed in 2013 in New York City. It is named after their lead sponsor *Citigroup* and operated by *Motivate*. The company own over 1300 stations throughout the city with over 19'000 bikes. Differ from bike rental service, Citibike's bike hiring service is aimed to provide a convenient way to travel around the city in a simple and affordable way. 
+
+Fun Fact: Based on Citibike's monthly [report](https://ride.citibikenyc.com/system-data/operating-reports) In 2020, Citibike's users have burned on average total of 145'008'666 kcals per month and helped the city reduce carbon 10261 tons of carbon.
+
+## 2.2 Key Performance Indicator (KPI)
+```{r, echo=FALSE, out.width="50%", fig.cap="Fig 2 - Citibike Bikes"}
+knitr::include_graphics("../pda_homework_03/image/citibikes.PNG")
+```
+The pricing for each type of membership are listed in the table below. When purchased a *pass*, the user has a free hiring period between 30 - 45 mins. Additional charge will apply if the user decides to rent longer than the free Hiring period.
+
+Table 1 - Membership Pricing
+
+| Membership Type   | Price ($)      | Free Hiring Period |
+|-------------------|----------------|--------------------|
+| Annual Pass (Subscriber)       | $179.00 / year | 45 mins|
+| Day Pass    (Customer)      | $15.00 / day   | 30 mins  |
+| Single Ride (Customer)      | $3.50 / trip   | --      |
+| Charge after Free Period      | $4.00 / 15mins | --      |
+
+
+The primarily income for Citibikes is through renting out bikes parked in the dock stations, seconded by the rental duration. Meaning the KPI should focus on either 1.) increase the duration or 2.) increase subscribers & customers.
+
+
+### 2.2.1 Bike Angels
+```{r, echo=FALSE, out.width="50%", fig.cap="Fig 3 - Bike Angel Logo"}
+knitr::include_graphics("../pda_homework_03/image/bikeangel.PNG")
+```
+In additional to the price reduce for the subscribers (i.e. Annual Membership users), Citibikes also offers a point-based bonus program called [Bike Angels](https://ride.citibikenyc.com/bike-angels), where the subscribers can earn points when they help to mitigate rebalancing issues by renting bikes from a crowded station and park at a lower capacity station. The points can be spend to redeem [awards](https://ride.citibikenyc.com/bike-angels/rewards) and gift cards. 
+
+
+
+# 3  Business Processes & Data Flow 
+
+The report used one of Citibike's bike dataset `nyc_bikes` for analysis. The dataset has the data for 10 specific bikes in NYC throughout 2018. It contains 4268 samples in total, recorded the time, parking location at the start and the end of the journey along with the user's age, gender & membership type.
+
+The users require the `Citibike & Lyft app` to rent a bike. The users need to use the app to locate a nearby docking station and the station will allocate the bike to them. As the bike leaving the station, the server will start recording relevant data until the bike is returned and docked at a station. The data is then feedback to the server to construct a data frame. The data flow process is summarised in `Fig 4` below.
+
+
+```{r, echo=FALSE, out.width="100%", fig.cap="Fig 4 - Data Flow Diagram"}
+knitr::include_graphics("../pda_homework_03/image/business_flow_diagram.PNG")
+```
+
+# 4. Analysis
+## 4.1 Data Overview
+`Plot 1` shows the starting location count of the 10 sample bikes displayed on the map of NYC. The locations are scattered within Jersey City, Bergen & the south side of The Heights, where the highest count occurred in Jersey city.
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 1 - Bike Start Locations"}
+# Bike location
+bike_main %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng = ~start_long,
+            lat = ~start_lat,
+              clusterOptions = markerClusterOptions())
+```
+
+### 4.1.1 Data Type & quality
+A view of the dataset used for this project is can be seen in `table 2` below. The table contains all the columns within the dataset, data type, an example of the data and a short description to explain what it is. There are primarily 3 categories of data type for this dataset, namely `Factor`, `Date` and `Numeric`. `Factor` data are categorical variable that recognizes each value as a category; `Date` data are Time series variable; `Numeric` variables are numeric digits with decimals.
+
+The dataset provided are extracted from one of the dataset provided on [Citibike's System Data](https://ride.citibikenyc.com/system-data) that is open to public. Citibike has removed any sensitive user information, trips that are taken by staff (i.e. for maintenance purpose) and trips that were below 60 seconds in time duration.
+
+
+Table 2 - Data Type
+
+| Data Name     | Data Type | Example             | Description                                                                 |
+|---------------|-----------|---------------------|-----------------------------------------------------------------------------|
+| bike_id       | Factor    | 26301               | The monitored bike's ID (contains 10 sample bikes in total for the dataset) |
+| start_time    | Date      | 2018-02-26 19:15:03 | The time when user rent and took the Citibike.                              |
+| stop_time     | Date      | 2018-02-26 19:15:40 | The time when user return and park the Citibike.                            |
+| start_station | Factor    | 3186                | The station ID where user rent the bike.                                    |
+| start_lat     | Numeric   | 40.71959            | The station's latitude where user rent the bike.                            |
+| start_long    | Numeric   | -74.04312           | The station's longitude where user rent the bike.                           |
+| end_station   | Factor    | 3203                | The station ID where user park the bike.                                    |
+| end_lat       | Numeric   | 40.72760            | The station's latitude where user park the bike                             |
+| end_long      | Numeric   | -74.04425           | The stations longitude where user park the bike                             |
+| type          | Factor    | Subscriber          | User's category (i.e. Customer or Subscriber)                               |
+| birth_year    | Numeric   | 1986                | User's birth year                                                           |
+| gender        | Factor    | Male                | User's gender                                                               |
+
+
+
+### 4.1.2 User Type, Gender Ratio & Data Ethics
+Throughout the 4268 samples, the gender proportion are 71.9%, 21.8% and 6.3% for Male, Female and Unknown, respectively. The proportion per client type are 7.4% & 92.6% for Customer (Pass users) and Subscriber (Monthly and Annual users). The dataset only contained samples of 10 bikes in 2018, which can only be used to provide a brief insight into the user behavior. Therefore, the analysis will exclude the user's details to avoid bias assumption.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+duration_sum <- bike_main %>% 
+  group_by(type) %>% 
+    summarise(mean_dura = round (mean(duration), digits = 2),
+              median = round(median(duration),digits = 2 ),
+              min_dura = round(min(duration),digits = 2),
+              max_dura = round(max(duration),digits = 2))
+
+overall_gender  <- bike_main %>% 
+  group_by(gender) %>% 
+  summarise(count = n()) %>% 
+  mutate(percent = round((count / nrow(bike_main) )*100, digits = 1)) %>% 
+  mutate(gender = factor(gender, levels = c("Unknown", "Female", "Male"))) %>% 
+  arrange(gender) %>% 
+  ggplot()+
+  aes(x = gender, y = percent, fill = gender)+
+  geom_bar(stat = "identity", colour = "black", show.legend = FALSE)+
+  scale_fill_manual("legend", values = c("Unknown" = "lightslategrey", "Female" = "deeppink3", "Male" = "blue"))+
+  geom_text(aes(label = percent), vjust = 1.75, colour = "white")+
+    labs(
+    title = "Gender vs Overall Biking Hiring",
+    subtitle = "Citibike Project"
+  )+
+  xlab("Gender")+
+  ylab("Percentage (%)")
+
+# User Type
+overall_client <- bike_main %>% 
+  group_by(type) %>% 
+  summarise(count = n())
+
+client_type <- bike_main %>%
+  group_by(type) %>% 
+  summarise(percent = round((n()/nrow(bike_main))*100,digits = 1)) %>% 
+  ggplot()+
+  aes(x = type, y = percent, fill = type, group = type)+
+  geom_bar(position = 'stack', stat = 'identity', colour = "black", show.legend = FALSE)+
+  scale_fill_manual("legend", values = c("Customer" = "#D9261C", "Subscriber" = "#003B70"))+
+  geom_text(aes(label = percent), vjust = 1.75, colour = "white")+
+    labs(
+    title = "User Type vs Overall Biking Hiring",
+    subtitle = "Citibike Project"
+  )+
+  xlab("User Type")+
+  ylab("Percentage (%)")+
+  annotate(geom = "table",
+           x = 0.46,
+           y = 80,
+           label = list(overall_client))
+gridExtra::grid.arrange(overall_gender, client_type, ncol=2)
+```
+
+## 4.2 Hiring Duration
+Boxplot in `plot 2` shows the data samples the hiring duration for all users. The interquartile range (i.e. the box) in the boxplot is shift towards the left at indicates a positive skewness to the dataset, with outliners spreading towards the right. A shifted box meaning the duration has a large range whilst the majority of the data point are concentrated at below 25 mins margin, where the interquartile range locates. A heavily shifted box plot also suggested that using median represent a more realistic approach to interpret the user's behavior.
+
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 2 - Overall Duration Boxplot"}
+bike_boxplot <- bike_main %>%
+  ggplot() +
+  aes(x = duration) +
+  geom_boxplot(position = "identity") +
+  xlim(0, 100) +
+  theme(axis.text.y=element_blank())+
+  labs(title = "Hiring Duration Boxplot (Capped at 100 mins)",) +
+  xlab("Duration (mins)")
+bike_boxplot
+```
+
+
+### 4.2.1 User Type vs. Hiring Duration
+`Table 4` below showed a summary of the median duration per client type. The Customer has a median of 19.68 mins which is higher than subscriber with a median of 5.59 mins. A pattern can be observed in `plot 3` that the Subscribers have a evenly distributed duration throughout the week, whereas Customers have a longer duration and higher duration difference throughout the week.
+
+
+
+```{r, echo=FALSE, message=FALSE, results='hide', fig.cap="Plot 3 - Median Duration per day per Client Type"}
+bike_hire_day_dura <- bike_main %>%
+  mutate(hours = hour(start_time)) %>%
+  mutate(weekdays = factor( weekdays, levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+  )) %>%
+  arrange(weekdays) %>%
+  group_by(type, weekdays) %>% 
+  summarise(median_dura = round( median(duration), digits = 2))
+
+bike_hire_day_dura  %>%
+  ggplot() +
+  aes(x = weekdays, y = median_dura, fill = type) +
+  geom_bar(stat = "identity", position = "dodge") +
+    labs(
+    title = "User Type vs Overall Biking Hiring",
+  )+
+        scale_fill_manual("legend", values = c("Customer" = "#D9261C", "Subscriber" = "#003B70"))+
+  theme(
+    legend.position = "bottom",
+    panel.border = element_blank(),
+    legend.title = element_blank()
+  ) +
+  labs(title = "Median Hiring Duration Per Client Type",) +
+  xlab("Days in Week") +
+  ylab("Duration (mins)")
+```
+Table 4 - Duration Summary
+
+| Type       | Median_Duration | Free Hiring Period |
+|------------|-----------------|--------------------|
+| Subscriber |    5.59 mins    | 45 mins            |
+| Customer   |    19.68 mins   | 30 mins            |
+
+
+## 4.3 Bike Hire Count
+
+### 4.3.1 User Type vs. Bike Hiring Count
+
+`Plot 4` displayed 2 line graphs showing the sum of hiring counts per daily hours during weekdays (Mon - Fri) and weekdays(Sat & Sun). The pattern stands out for subscribers using Citibikes for commuting to work as the a bimodal shape appeared in the weekday line, peaked at 0800 & 1800, whilst the weekend line remained relative flat when compared to the weekday line.
+For Customer, both weekday and weekend lines shows similarity in shapes indicates the customer behavour are similar throughout the week, where the count rate is increasing to a maximum then decrease again. The difference between weekday and weekend is during weekend the count rate is increasing more gradually than weekdays, showing a more layback behavior.
+
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 4 - Bike Hire Count per Daily Hours (L - Customer, R - Subscriber)"}
+bike_hire_day <- bike_main %>% 
+  mutate(hours = hour(start_time)) %>% 
+  group_by(type, is_weekend, hours) %>% 
+  summarise(bike_hire_count = n())
+  
+cus_hire_count <- bike_hire_day %>% 
+  filter(type == "Customer") %>% 
+  ggplot()+
+  aes(x = hours, y = bike_hire_count, colour = is_weekend)+
+  geom_line(size = 1)+
+  facet_grid(~type,)+
+  scale_x_continuous("Hours",limits = c(0,24), breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24))+
+    theme(legend.position = "bottom",
+          panel.border = element_blank(),
+          legend.title=element_blank())+
+    labs(
+    title = "Bike Hire Count Per Hours (Cus)",
+  )+
+  xlab("Hours")+
+  ylab("Hiring Count")
+
+
+sub_hire_count <-  bike_hire_day %>% 
+  filter(type == "Subscriber") %>% 
+  ggplot()+
+  aes(x = hours, y = bike_hire_count, colour = is_weekend)+
+  geom_line(size = 1)+
+  facet_grid(~type,)+
+  scale_x_continuous("Hours",limits = c(0,24), breaks = c(0,2,4,6,8,10,12,14,16,18,20,22,24))+
+    theme(legend.position = "bottom",
+          panel.border = element_blank(),
+          legend.title=element_blank())+
+    labs(
+    title = "Bike Hire Count Per Hours (Sub)",
+  )+
+  xlab("Hours")+
+  ylab("Hiring Count")
+  
+ gridExtra::grid.arrange(cus_hire_count, sub_hire_count, ncol=2) 
+  
+```
+
+
+
+### 4.3.2 Average Bike Hire Count vs Temperature Range
+
+The second analysis factor for the dataset is the bike hire count, a new dataset is introduced for this analysis. The new dataset contains the average temperature per day in 2018 extracted from [Weather Underground](https://www.wunderground.com/weather/us/ny/new-york-city).
+
+`Plot 5` shows the hire count throughout the months in 2018, where the distirbution is slightly shifted towards the right, peaked at August. The bike hiring count can be related to the temperature as people are active under the heat rather than cycling in the cold.
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 5 - (Left) Bike Hire Count Distribution plot & (Right) NYC Average Temperature"}
+avg_temp_mon <- temp_2018 %>% 
+  mutate(month = month(ymd(date), label = TRUE, abbr = TRUE)) %>% 
+  group_by(month) %>% 
+  summarise(avg_mon_temp = round(mean(avg), digits = 2)) %>% 
+  ggplot()+
+  aes(x = month, y = avg_mon_temp, group = 1)+
+  geom_point(stat = "identity", colour = "red")+
+  geom_line(stat = "identity", colour = "red")+
+  labs(
+    title = "NYC Average Temperature in 2018",
+  )+
+  xlab("Client Type")+
+  ylab("Average Tempreture (\u00B0C)")
+
+
+bike_count_distribution <- bike_main %>%
+  group_by(month) %>%
+  summarise(count = n()) %>% 
+  ggplot() +
+  aes(x = month, y = count)+
+geom_histogram(stat = "identity", col = "white")+
+  labs(
+    title = "Bike Hire Count Distribution in 2018",
+  )+
+  xlab("Month")+
+  ylab("Count")
+
+# subtitle = "Extracted from Weather Underground"
+gridExtra::grid.arrange(avg_temp_mon, bike_count_distribution, ncol=2)
+```
+
+
+## 4.4 Additional Insights - Average Bike Hire Count vs Temperature Range
+
+The additional insight derived from the concept that was analysed in section 4.3.1 where `plot 4` showed the resembles between bike hiring count vs. temperature range during the year. The temperature range is now separated into 8 categories from Less than 5°C to Above 36°C with an increment of 5°C.
+The results is showed in `plot 6`. The temperature has an influence to the bike hiring count, where the optimal range lays on between 21°C - 30°C. People tend to have a high tendency hiring bikes at a lower temperature than higher temperature. 
+
+
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 6 - Bike Hire Count per temperature range"}
+bike_temp <- bike_main %>% 
+  mutate(date = ymd(as.Date(start_time))) %>% 
+  right_join(temp_2018, by = "date") %>% 
+  mutate(cat = case_when(avg <= 5 ~ "0",
+                         avg > 6 & avg <= 10 ~ "1",
+                         avg > 10 & avg <= 15 ~ "2",
+                         avg > 15 & avg <= 20 ~ "3",
+                         avg > 20 & avg <= 25 ~ "4",
+                         avg > 25 & avg <= 30 ~ "5",
+                         avg > 30 & avg <= 35 ~ "6",
+                         avg > 35 ~ "7",
+                         TRUE ~ "7")) %>% 
+  group_by(cat) %>% 
+  summarise(count = n())
+
+temp_cat_label <- c("Less than 5 \u00B0C", "6\u00B0C - 10\u00B0C", "11\u00B0C - 15\u00B0C", "16\u00B0C-20\u00B0C", "21\u00B0C - 25\u00B0C", "26\u00B0C - 30\u00B0C", "31\u00B0C - 35\u00B0C", "Above 36\u00B0C")
+
+bike_temp %>% 
+  ggplot()+
+  aes(x = cat, y = count, fill = cat)+
+  geom_bar(stat = "identity", show.legend = FALSE) +
+    scale_fill_brewer(palette = "OrRd")+
+  theme(panel.background = element_rect(fill = "gray87"))+
+    labs(
+    title = "Average Bike Hire Count vs Temperature",
+  )+
+  scale_x_discrete(labels= temp_cat_label)+
+  xlab("Temperature Catagory (\u00B0C)")+
+  ylab("Bike Hiring Count")
+
+```
+
+## 4.4.2 Recommandation
+
+Using the data showed in `plot 6`, there is a potential to increase bike hiring rate at the lower temperature. A recommdation of Citibike should utilise the `Bike Angel` bonus program to promote users riding bikes at a lower temperature which can encourage users to exercise more whilst earning bonus points for a reward.
+
+
+# 5. Conclusion
+
+The aim of the report is to provide a brief insight and provide a recommendation to improve Citibike's KPI using a sample dataset provided from the company. Citibikes' primary income is coming from renting bikes and extra cost for long duration users. The business data is tracked and recorded through the app users used when renting the bike.
+
+The data overview showed that the parking hotspots are surrounded between Bergen, The Height and Jersey City area, while Jersey City has a high bike storing rate. In the sample dataset, it is deemed that there is insufficient data proportion between gender and will not be used for further analysis avoid bias conclusion. The subscriber has a flatter duration pattern during the week when compared to Customers.
+
+In the bike hire count per daily hours plots shows a distinct trend between customer and subscriber. It can be seen that subscriber are more actively hiring bikes during weekdays at peak hours than during weekend, whereas customer shows similar hiring pattern throughout the week.
+
+The hiring count analysis shows the hiring count follows a similar trend to the average temperature. In the additional analysis, the hiring count is analysed with the temperature range. The plot showed the optimal temperature when users are more likely to hiring a bike is between 21°C- 30°C, the plot also showed that users has a high tendency to hire a bike in cold weather than in extreme heat.
+
+Based on the additional insights, a further recommendation was proposed to create an additional bonus point system based on the temperature to encourage more users to exercise during the cold weather whilst earning bonus points. 
+
+
+```{r}
+# Unuse Code
+# Gender count per month
+# bike_main %>% 
+#   group_by(month, gender) %>% 
+#   summarise(count = n()) %>% 
+#   mutate( gender = factor(gender, levels = c("Unknown", "Female", "Male"))) %>% 
+#   arrange(gender) %>% 
+#   ggplot()+
+#   aes(x = month, y = count, fill = gender)+
+# geom_histogram(stat = "identity", bins = 30)+
+# scale_fill_manual("legend", values = c("Unknown" = "lightslategrey", "Female" = "red2", "Male" = "royalblue2"))+
+#   labs(
+#     title = "(2018) Monthly Bike Hire Count by Gender",
+#   )
+
+# 
+# bike_main %>% 
+#   ggplot()+
+#   aes(x = duration)+
+# geom_histogram(bins = 30, alpha = 1)+
+#   labs(
+#     title = "(2018) Hiring Duration Per Group",
+#   )
+# # If we took out 5479.65 & 5106.10 set limit to 650mins (next one down is 613.26)
+
+
+
+# avg_dura <- bike_main %>% 
+#   group_by(type) %>% 
+#   summarise(mean_duration = mean(duration),
+#             median_duration = median(duration))
+# avg_dura
+# 
+# bike_duration <- bike_main %>% 
+#   select(type, duration) %>% 
+#   mutate(duration_hour = as.numeric(duration)/60)
+# 
+# 
+# 
+# 
+# 
+# cust_plot <- bike_main %>% 
+#   filter(type == "Customer") %>% 
+#   ggplot()+
+#   aes(x = duration, fill = type)+
+# geom_histogram(position = "identity", bins = 30, alpha = 0.5, show.legend = FALSE)+
+#   labs(
+#     title = "(2018) Hiring Duration Customer",
+#   )+
+#   xlim(0,200)
+#   
+# sub_plot <- bike_main %>% 
+#   filter(type == "Subscriber") %>% 
+#   ggplot()+
+#   aes(x = duration, fill = type)+
+# geom_histogram(position = "identity", bins = 30, alpha = 0.5, show.legend = FALSE)+
+#   labs(
+#     title = "(2018) Hiring Duration Subscriber",
+#   )+
+#   xlim(0,200)
+#   
+# gridExtra::grid.arrange(cust_plot, sub_plot, ncol=2)
+
+
+
+# bike_hire_week_dura <- bike_main %>%
+#   mutate(hours = hour(start_time)) %>%
+#   mutate(weekdays = factor( weekdays, levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+#   )) %>%
+#   arrange(weekdays) %>%
+#   group_by(type, weekdays) %>% 
+#   summarise(count = n())
+# 
+# bike_hire_week_dura  %>%
+#   ggplot() +
+#   aes(x = weekdays, y = count, fill = type) +
+#   geom_bar(stat = "identity", position = "dodge") +
+#     labs(
+#     title = "User Type vs Overall Biking Hiring Week",
+#   )+
+#         scale_fill_manual("legend", values = c("Customer" = "#D9261C", "Subscriber" = "#003B70"))+
+#   theme(
+#     legend.position = "bottom",
+#     panel.border = element_blank(),
+#     legend.title = element_blank()
+#   ) +
+#   labs(title = "Bike Hire Count Per Client Type",) +
+#   xlab("Days in Week") +
+#   ylab("Hiring Count")
+# 
+
+```
+
+
+
