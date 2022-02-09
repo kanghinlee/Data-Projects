@@ -1,0 +1,82 @@
+---
+title: "API Retreive Script"
+output: html_notebook
+---
+
+
+# Packages
+#--------------------------------------------------------------------------#
+```{r, echo=FALSE, message=FALSE, results='hide'}
+library(tidyverse)
+library(janitor)
+library(jsonlite)
+library(here)
+```
+
+# API Function
+#--------------------------------------------------------------------------#
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+# Function for fetching phs dataframes
+phs_df_func <- function(id){
+  
+  # Link templates for simplicity
+  phs_url = "https://www.opendata.nhs.scot/api/3/action/datastore_search?resource_id="
+  # fetch maximum 999'999 results for simplicity
+  limit_url = "&limit=999999"
+  
+  # construct URL for fetching process
+  url_link <- paste0(phs_url, id, limit_url) %>%
+    fromJSON()
+  
+  # construct dataframe from url
+  phs_df <-  url_link[["result"]][["records"]] %>% 
+    clean_names()
+  
+  return(phs_df)
+
+}
+```
+
+
+# # Load in API Dataframe (Backup)
+#--------------------------------------------------------------------------#
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+# Incidence at Scotland Level
+backup_inc_ans <- phs_df_func("72c852b8-ee28-4fd8-84a9-5f415f4bc325")
+# Incidence by Cancer Network Region
+backup_inc_cnr <- phs_df_func("8cba0250-7e78-496d-8559-98c9c9a3d3e3")
+# Incidence by Health Board
+backup_inc_hb <- phs_df_func("3aef16b7-8af6-4ce0-a90b-8a29d6870014")
+# 5 Year Summary of Incidence at Scotland level
+backup_fiv_ans <- phs_df_func("0b163930-94e7-4ecd-9c8a-ba252dc1011c")
+# 5 Year Summary of Incidence by Cancer Network Region
+backup_fiv_cnr <- phs_df_func("5937af2a-358c-46a0-a9e7-2fe333a9db09")
+# 5 Year Summary of Incidence by Health Board
+backup_fiv_hb <- phs_df_func("e8d33b2b-1fb2-4d59-ad21-20fa2f76d9d5")
+
+```
+
+# # Export Raw Dataframes
+#--------------------------------------------------------------------------#
+```{r, echo=FALSE, message=FALSE, results='hide'}
+make_file_names <- function(x) paste0(target_directory,x,".csv")
+save_csv <- function(x) write_csv(obj_list[[x]],file_name[[x]])
+
+target_directory <- here("raw_data//")
+
+
+name_pattern <- grep("backup_",names(.GlobalEnv),value=TRUE)
+obj_list     <- do.call("list",mget(name_pattern))
+file_name      <- make_file_names(names(obj_list))
+
+for (i in seq_along(names(obj_list))) save_csv(i)
+
+# Create Dataframe List
+name_list <- as_tibble(name_pattern) %>% arrange(value)
+namelist_path <- paste0(target_directory,"00_Backup_Dataframe_List.csv")
+
+write.csv(name_list, namelist_path, row.names = FALSE)
+
+```

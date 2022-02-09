@@ -1,0 +1,103 @@
+---
+title: "PHS Cancer Incidence Cleaning Script"
+output: html_notebook
+---
+# Packages
+#--------------------------------------------------------------------------#
+```{r, echo=FALSE, message=FALSE, results='hide'}
+library(tidyverse)
+library(sf)
+library(janitor)
+library(jsonlite)
+library(lubridate)
+library(here)
+library(readr)
+library(here)
+```
+# # Load in API Dataframe (Backup)
+#--------------------------------------------------------------------------#
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+# Incidence at Scotland Level
+backup_inc_ans <- read_csv("raw_data/backup_inc_ans.csv")
+# Incidence by Cancer Network Region
+backup_inc_cnr <- read_csv("raw_data/backup_inc_cnr.csv")
+# Incidence by Health Board
+backup_inc_hb <- read_csv("raw_data/backup_inc_hb.csv")
+# 5 Year Summary of Incidence at Scotland level
+backup_fiv_ans <- read_csv("raw_data/backup_fiv_ans.csv")
+# 5 Year Summary of Incidence by Cancer Network Region
+backup_fiv_cnr <- read_csv("raw_data/backup_fiv_cnr.csv")
+# 5 Year Summary of Incidence by Health Board
+backup_fiv_hb <- read_csv("raw_data/backup_fiv_hb.csv")
+```
+
+# # Load in API Dataframe (Backup)
+#--------------------------------------------------------------------------#
+```{r}
+# Incidence at Scotland Level
+df_inc_ans<- backup_inc_ans %>% 
+  select(-ends_with("_qf"), -id,-country) %>% 
+  rename_with(~ gsub('incidences_', '', .x)) %>% 
+  rename_with(~ gsub('incidence_', '', .x))
+
+
+# Incidence by Cancer Network Region
+df_inc_cnr <- backup_inc_cnr %>% 
+    select(-ends_with("_qf"), -id) %>% 
+  rename_with(~ gsub('incidences_', '', .x)) %>% 
+  rename_with(~ gsub('incidence_', '', .x))
+
+
+# Incidence by Health Board
+df_inc_hb <- backup_inc_hb %>% 
+  select(-ends_with("_qf"), -id) %>% 
+  rename_with(~ gsub('incidences_', '', .x)) %>% 
+  rename_with(~ gsub('incidence_', '', .x))
+
+
+# 5 Year Summary of Incidence at Scotland level
+df_fiv_inc_ans <- backup_fiv_ans %>% 
+  select(-ends_with("_qf"), -country, -id) %>%
+  rename_with(~ gsub('incidences_', '', .x)) %>% 
+  rename_with(~ gsub('incidence_', '', .x))
+
+# 5 Year Summary of Incidence by Cancer Network Region
+df_fiv_cnr <- backup_fiv_cnr %>% 
+  select(-ends_with("_qf"), -id) %>%
+  rename_with(~ gsub('incidences_', '', .x)) %>% 
+  rename_with(~ gsub('incidence_', '', .x))
+
+# 5 Year Summary of Incidence by Health Board
+df_fiv_hb <- backup_fiv_hb %>% 
+  select(-ends_with("_qf")) %>%
+  rename_with(~ gsub('incidences_', '', .x)) %>% 
+  rename_with(~ gsub('incidence_', '', .x))
+
+
+```
+
+
+
+# # Export Clean Dataframes
+#--------------------------------------------------------------------------#
+```{r, echo=FALSE, message=FALSE, results='hide'}
+make_file_names <- function(x) paste0(target_directory,x,".csv")
+save_csv <- function(x) write_csv(obj_list[[x]],file_name[[x]])
+
+target_directory <- here("clean_data//")
+
+
+name_pattern <- grep("df_",names(.GlobalEnv),value=TRUE)
+obj_list     <- do.call("list",mget(name_pattern))
+file_name      <- make_file_names(names(obj_list))
+
+for (i in seq_along(names(obj_list))) save_csv(i)
+
+# Create Dataframe List
+name_list <- as_tibble(name_pattern) %>% arrange(value)
+namelist_path <- paste0(target_directory,"00_backup_Dataframe_List.csv")
+
+write.csv(name_list, namelist_path, row.names = FALSE)
+
+```
