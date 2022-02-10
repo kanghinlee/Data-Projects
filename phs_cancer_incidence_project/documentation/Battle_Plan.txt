@@ -1,0 +1,26 @@
+Overall 
+Focus on Age group and gender comapre with wasr
+
+
+df_fiv_ans
+Highest canceer incident per age group
+
+
+Specific
+
+df_inc_ans
+highest growth rate throughout the year
+top 3 cancers per gender type
+High difference for non-gender specific cancer (i.e. Male / Female =/= 0)
+
+
+Job
+Work well with everyone
+
+
+
+Presentation
+
+
+
+Age gruop

@@ -1,0 +1,257 @@
+---
+title: "NHS Cancer Incident Report - Patient Demographics"
+author: "Kang Hin, Lee"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+library(tidyverse)
+library(sf)
+library(janitor)
+library(jsonlite)
+library(lubridate)
+library(here)
+library(readr)
+library(tsibble)
+library(tsibbledata)
+library(ggpmisc)
+library(slider)
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+df_inc_ans <- read_csv("clean_data/df_inc_ans.csv") 
+
+df_fiv_ans<- read_csv("clean_data/df_fiv_ans.csv")
+
+df_fiv_hb <- read_csv("clean_data/df_fiv_hb.csv")
+
+hos_loc <- read_csv("clean_data/df_hospital_location.csv")
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+all_inc_ans <- df_inc_ans %>% 
+  relocate(year, .before = cancer_site) %>% 
+  relocate(all_ages, .before = age_under5) %>% 
+  relocate(easr, .before = all_ages) %>% 
+  relocate(wasr, .before = easr) %>% 
+  relocate(crude_rate, .before = wasr) %>% 
+  select(-c(27:ncol(df_inc_ans))) %>% 
+  rename_with(~ gsub('^age', '', .x)) %>% 
+  rename_with(~ gsub('^_', '', .x)) %>% 
+pivot_longer(!c(1:6), names_to = "age_cat", values_to = "count")
+  
+
+name_list <- as.data.frame(table(all_inc_ans$age_cat)) %>% 
+  pivot_wider(names_from = Var1, values_from = Var1) %>% 
+  relocate('5to9', .before   ='10to14') %>% 
+  relocate('under5', .before = '5to9') %>% 
+  select(-Freq)
+name_list <- sapply(name_list, "[", 1)
+
+all_inc_ans <- all_inc_ans %>% 
+  mutate(age_cat = factor(age_cat, levels = name_list))
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+all_age_inc <- df_inc_ans %>% 
+  select(year, cancer_site, sex, all_ages) %>% 
+  rename(count = all_ages)
+  
+all_rate_inc <- df_inc_ans %>% 
+  select(year, cancer_site, sex, crude_rate, wasr, easr) %>% 
+  rename(uk = crude_rate,
+         europe = easr,
+         world = wasr) %>% 
+  pivot_longer(!c(1:3), names_to = "rate_cat", values_to = "count") %>% 
+  mutate(rate_cat  = factor(rate_cat, levels = c("uk", "europe", "world")))
+```
+# 1 Crude Rate {.tabset}
+
+## Crude Rate vs Year (UK, Europe, World)
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 1 - Crude Rate vs Year (UK, Europe, World)"}
+plot_crude_compare <- all_rate_inc %>% 
+    filter(sex == "All", cancer_site == "All cancer types") %>% 
+  ggplot()+
+  geom_line(aes(x = year, y = count, group = rate_cat, colour = rate_cat, linetype = rate_cat), stat = 'identity', size = 1)+ 
+    scale_color_manual(values = c("firebrick3", "deepskyblue4", "forestgreen"))+
+  labs(title = "Crude Rate Comparsion vs Year",
+    subtitle = "Crude Rate - Incidents per 100'000 population at risk")+
+    theme(legend.position="bottom")+
+  xlab("Year")+
+  ylab("Crude Rate")
+plot_crude_compare
+```
+***
+## 3 Years Moving Average Crude Rate vs Year (Sex)
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 2 - 3 Years Moving Average Crude Rate vs Year (Biological Sex)"}
+plot_sex_crude <- all_rate_inc %>% 
+  filter(cancer_site == "All cancer types", sex != "All", rate_cat == "uk") %>% 
+  group_by(sex) %>% 
+     mutate( moving_avg = slide_dbl(
+      .x = count,
+      .f = ~mean(.,na.rm = TRUE),
+# 2 weeks moving average
+      .before = 3
+    )  ) %>% 
+  ggplot()+
+  # geom_line(aes(x = year, y = count, group = sex, colour = sex))+
+  geom_line(aes(x = year, y = moving_avg, group = sex, colour = sex), size = 0.75, linetype = 1)+
+  scale_color_manual(labels = c("Male", "Female"),values = c("darkred", "steelblue"))+
+      theme(legend.position="bottom")+
+  labs(title = "3 Years Moving Average Crude Rate vs Year (Biological Sex)")+
+  xlab("Year")+
+  ylab("Crude Rate")
+plot_sex_crude
+```
+***
+# 2 Patient Demographics {.tabset}
+***
+## Incident Count vs Biological Sex
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 3 - Overall Incidents (Biological Sex)"}
+all_sex_inc <- all_age_inc %>% 
+  filter(cancer_site == "All cancer types", sex != "All") %>% 
+  group_by(sex) %>% 
+  summarise(count = sum(count)/1000) %>% 
+  mutate(percent = round ((count / sum(count))*100, digits = 1))
+
+plot_sex_inc <- all_sex_inc %>% 
+  ggplot()+
+  geom_bar(aes(x = sex , y = count, fill = sex), stat = "identity", position = "stack")+
+  scale_color_manual(labels = c("Male", "Female"),values = c("blue", "red"))+
+    geom_text(aes(x = sex, y = count, label = paste0(percent,"%")), vjust = 1.75, colour = "white")+
+    scale_fill_manual(values = c("Female" = "steelblue", "Male" = "darkred"))+
+  labs(title = "Incident Count (Per 1'000 Population) vs Biological Sex",
+       subtitle = "Data From Year 1995 - 2019")+
+      theme(legend.position="bottom")+
+  xlab("Year")+
+  ylab("Incident Count (Per 1'000)")
+plot_sex_inc
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+all_age_inc_ans <- all_inc_ans %>% 
+  filter(cancer_site == "All cancer types", age_cat != "all_ages", sex != "All") %>% 
+  group_by(sex, age_cat) %>% 
+  summarise(count = sum(count)/1000) %>% 
+  mutate(sex = factor(sex, levels = c("Male", "Female")))
+```
+
+***
+## Incident Count vs Age Group
+
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 4 - Incident Count Per Age Group vs Biological Sex"}
+plot_all_inc_age <- all_age_inc_ans %>% 
+  ggplot()+
+  aes(x = age_cat, y = count, fill = age_cat)+
+  geom_bar(stat = "identity", position = "stack", show.legend = FALSE, col = "white")+
+  # theme(axis.text.x = element_text(angle = 90))+
+  scale_fill_manual(values = c("65to69" = "darkorchid4", "70to74" = "darkorchid4", "75to79" = "darkorchid4"))+
+  facet_grid(~sex,)+
+  labs(title = "Age Group vs Incident Count (Biological Sex)",
+       subtitle = "Data From 1995 - 2019")+
+  xlab("Age Grounps")+
+  ylab("Incident Count (Per 1'000)")+
+      coord_flip()
+plot_all_inc_age
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+all_fiv_ans <- all_inc_ans %>% 
+  select(-crude_rate, -wasr, -easr) %>% 
+filter(sex != "All", cancer_site != "All cancer types", age_cat == "all_ages")
+
+all_sex_top_cancer_type <- all_fiv_ans %>% 
+  group_by(sex, cancer_site) %>% 
+  summarise(count = sum(count)) %>% 
+  arrange(desc(count)) %>% 
+  slice_head(n = 5)
+
+
+```
+# 3 Cancer Incidents Type{.tabset}
+***
+## Cancers Incidents in Male
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 5 - Top 5 Cancers Incidents in Male"}
+plot_male_top_cancer_type <- all_sex_top_cancer_type %>% 
+  filter(sex == "Male") %>%
+  mutate(count = count/1000) %>% 
+  arrange(count) %>% 
+  ggplot()+
+  aes(x = count, y = reorder (cancer_site, count) , fill = cancer_site)+
+  geom_bar(stat = "identity", position = "dodge", show.legend = FALSE)+
+    scale_fill_manual(values = c("Non-melanoma skin cancer" = "darkred"))+
+    labs(title = "Top 5 Cancers Incidents in Male",
+       subtitle = "Data From 1995 - 2019")+
+  xlab("Incidents (Per 1'000)")+
+  ylab("Cancer Type")
+plot_male_top_cancer_type
+
+
+```
+***
+## Cancers Incidents in Female
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 6 - Top 5 Cancers Incidents in Female"}
+plot_female_top_cancer_type <- all_sex_top_cancer_type %>% 
+  filter(sex == "Female") %>%
+  mutate(count = count/1000) %>% 
+  arrange(count) %>% 
+  ggplot()+
+  aes(x = count, y = reorder (cancer_site, count) , fill = cancer_site)+
+  geom_bar(stat = "identity", position = "dodge", show.legend = FALSE)+
+  scale_fill_manual(values = c("Breast" = "steelblue"))+
+      labs(title = "Top 5 Cancers Incidents in Female",
+       subtitle = "Data From 1995 - 2019")+
+  xlab("Incidents (Per 1'000)")+
+  ylab("Cancer Type")
+plot_female_top_cancer_type
+```
+
+***
+## Biological Sex Proportion for Non-gender Specific Cancer Incidents
+```{r, echo=FALSE, message=FALSE, warning = FALSE, fig.cap="Plot 7 - Biological Sex proportions for non-gender specific cancer Type"}
+non_gender_cancer_type <- all_inc_ans %>% 
+  select(-crude_rate, -wasr, -easr) %>% 
+filter(sex != "All", cancer_site != "All cancer types", age_cat == "all_ages") %>% 
+  pivot_wider(names_from = sex, values_from = count) %>% 
+  group_by(cancer_site) %>% 
+  summarise(Male = sum(Male),
+            Female = sum(Female)) %>% 
+  drop_na() %>% 
+  mutate(diff_male_inc = Male/(Male + Female),
+         diff_female_inc = Female/(Male + Female))
+
+
+female_non_gender_cancer_type <- non_gender_cancer_type %>% 
+    arrange(diff_male_inc) %>% 
+  slice_head(n = 3) %>% 
+  rename(diff_inc = diff_female_inc) %>% 
+  mutate(diff_inc = diff_inc * -1)
+
+male_non_gender_cancer_type <- non_gender_cancer_type %>% 
+      arrange(diff_female_inc) %>% 
+  slice_head(n = 3) %>% 
+  rename(diff_inc = diff_male_inc)
+
+plot_non_gender_cancer_type = bind_rows(male_non_gender_cancer_type, female_non_gender_cancer_type) %>% 
+  mutate(pos = diff_inc >= 0,
+         percent = round(abs(diff_inc*100), digits = 1)) %>% 
+  ggplot()+
+  aes(x = diff_inc, y = reorder(cancer_site, diff_inc), fill = pos)+
+  scale_fill_manual(values = c("steelblue", "darkred"))+
+  geom_bar(stat = "identity", show.legend = FALSE)+
+  geom_text(aes(x = diff_inc/5, y = reorder(cancer_site, diff_inc), label = paste0(percent,"%")), colour = "white")+
+        labs(title = "Biological Sex Proportion for Non-gender Specific Cancer Incidents")+
+  xlab("Incidents (Per 1'000)")+
+  ylab("Cancer Type")+
+scale_x_continuous(limits = c(-1,1))
+
+
+
+plot_non_gender_cancer_type
+
+```
+

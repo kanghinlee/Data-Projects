@@ -37,40 +37,40 @@ backup_fiv_hb <- read_csv("raw_data/backup_fiv_hb.csv")
 ```{r}
 # Incidence at Scotland Level
 df_inc_ans<- backup_inc_ans %>% 
-  select(-ends_with("_qf"), -id,-country) %>% 
+  select(-ends_with("_qf"), -id,-country, -cancer_site_icd10code) %>% 
   rename_with(~ gsub('incidences_', '', .x)) %>% 
   rename_with(~ gsub('incidence_', '', .x))
 
 
 # Incidence by Cancer Network Region
 df_inc_cnr <- backup_inc_cnr %>% 
-    select(-ends_with("_qf"), -id) %>% 
+    select(-ends_with("_qf"), -id, -cancer_site_icd10code) %>% 
   rename_with(~ gsub('incidences_', '', .x)) %>% 
   rename_with(~ gsub('incidence_', '', .x))
 
 
 # Incidence by Health Board
 df_inc_hb <- backup_inc_hb %>% 
-  select(-ends_with("_qf"), -id) %>% 
+  select(-ends_with("_qf"), -id, -cancer_site_icd10code) %>% 
   rename_with(~ gsub('incidences_', '', .x)) %>% 
   rename_with(~ gsub('incidence_', '', .x))
 
 
 # 5 Year Summary of Incidence at Scotland level
-df_fiv_inc_ans <- backup_fiv_ans %>% 
-  select(-ends_with("_qf"), -country, -id) %>%
+df_fiv_ans <- backup_fiv_ans %>% 
+  select(-ends_with("_qf"), -country, -id, -cancer_site_icd10code) %>%
   rename_with(~ gsub('incidences_', '', .x)) %>% 
   rename_with(~ gsub('incidence_', '', .x))
 
 # 5 Year Summary of Incidence by Cancer Network Region
 df_fiv_cnr <- backup_fiv_cnr %>% 
-  select(-ends_with("_qf"), -id) %>%
+  select(-ends_with("_qf"), -id, -cancer_site_icd10code) %>%
   rename_with(~ gsub('incidences_', '', .x)) %>% 
   rename_with(~ gsub('incidence_', '', .x))
 
 # 5 Year Summary of Incidence by Health Board
 df_fiv_hb <- backup_fiv_hb %>% 
-  select(-ends_with("_qf")) %>%
+  select(-ends_with("_qf"), -cancer_site_icd10code) %>%
   rename_with(~ gsub('incidences_', '', .x)) %>% 
   rename_with(~ gsub('incidence_', '', .x))
 
