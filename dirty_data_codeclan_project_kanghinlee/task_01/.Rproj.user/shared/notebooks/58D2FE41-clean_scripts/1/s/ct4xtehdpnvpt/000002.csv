@@ -1,4 +1,0 @@
-"0","top_shot_put_scores <- select(deca_main, athlete_name, shot_put, competition) %>% "
-"0","  group_by(competition) %>% "
-"0","  slice_max(shot_put, n = 3)"
-"0","top_shot_put_scores"

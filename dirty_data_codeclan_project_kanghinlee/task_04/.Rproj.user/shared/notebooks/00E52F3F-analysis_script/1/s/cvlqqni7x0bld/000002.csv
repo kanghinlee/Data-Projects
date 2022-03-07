@@ -1,7 +1,0 @@
-"0","main_15$gender <- NA"
-"0","main_15$country <- NA"
-"0","main_15$province_n_county <- NA"
-"0",""
-"0","main_15 <-  relocate(main_15,province_n_county, .after = age)"
-"0","main_15 <-  relocate(main_15,country, .after = age)"
-"0","main_15 <-  relocate(main_15,gender, .after = age)"

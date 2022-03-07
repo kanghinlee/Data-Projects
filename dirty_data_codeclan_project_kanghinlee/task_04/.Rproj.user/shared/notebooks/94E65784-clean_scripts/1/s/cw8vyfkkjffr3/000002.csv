@@ -1,3 +1,0 @@
-"0","deca_main %>% "
-"0","  select(athlete_name, long_jump) %>%"
-"0","  slice_max(long_jump)"

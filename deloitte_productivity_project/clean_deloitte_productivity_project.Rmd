@@ -1,0 +1,45 @@
+---
+title: "Deloitte Productivity Cleaning Script"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(janitor)
+library(readxl)
+library(here)
+```
+
+```{r}
+test_raw <- readxl::read_excel("data/data/International Labour Productivity - Europe.xls", sheet = "Table 1")
+```
+
+```{r}
+# Remove na rows
+test <- na.omit(test_raw)
+```
+
+# Functions
+```{r}
+multiplesheets <- function(fname) {
+   
+  # getting info about all excel sheets
+  sheets <- readxl::excel_sheets(fname)
+  tibble <- lapply(sheets, function(x) readxl::read_excel(fname, sheet = x))
+  data_frame <- lapply(tibble, as.data.frame)
+    
+  # assigning names to data frames
+  names(data_frame) <- sheets
+    
+  # print data frame
+  print(data_frame)
+}
+  
+# specifying the path name
+```
+
+```{r}
+test <-multiplesheets("data/data/International Labour Productivity - Europe.xls")
+
+test1 <- test$`Table 1`
+```
+

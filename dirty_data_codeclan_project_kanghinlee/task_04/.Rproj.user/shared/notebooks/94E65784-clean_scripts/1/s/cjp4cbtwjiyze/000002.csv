@@ -1,6 +1,0 @@
-"0","# gather dataset for x400m, separate into groups of x400 >50 and <=50 seconds then average the output."
-"0","ran_400m <- select(deca_main, x400m, points) %>% "
-"0","  mutate(above_50sec = x400m > 50) %>% "
-"0","  group_by(above_50sec) %>%"
-"0","  summarise_at(vars(points), list(avg_points = mean))"
-"0","ran_400m"

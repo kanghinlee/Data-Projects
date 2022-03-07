@@ -1,8 +1,0 @@
-"0","star_despair <- main_tot %>% "
-"0","    filter(starburst == ""DESPAIR"")"
-"0",""
-"0","nrow(star_despair)"
-"1","[1]"
-"1"," 1990"
-"1","
-"

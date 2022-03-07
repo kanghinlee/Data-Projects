@@ -1,7 +1,0 @@
-"0","gend_16_rattot %>% filter(gender == ""Female"") %>% arrange()
-"
-"2","Error: Problem with `filter()` input `..1`.
-[34mi[39m Input `..1` is `gender == ""Female""`.
-[31mx[39m object 'gender' not found
-[90mRun `rlang::last_error()` to see where the error occurred.[39m
-"
