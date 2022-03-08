@@ -11,6 +11,9 @@ library(here)
 
 ```{r}
 test_raw <- readxl::read_excel("data/data/International Labour Productivity - Europe.xls", sheet = "Table 1")
+
+
+tt <-read.delim2("data/deloitte_data_dictionary_2019.numbers", header = FALSE)
 ```
 
 ```{r}

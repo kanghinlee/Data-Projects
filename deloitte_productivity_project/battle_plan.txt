@@ -1,10 +1,30 @@
-
 GOAL/ Business Questions:
 Our main business question is generally: How can we improve productivity within Scotland and the UK overall? 
 
 
 3 MVPs are set up to answer our business questions:
 
+Explorlatory Analysis
 • Which industries are lagging behind in terms of productivity and how could they catch up? 
+
+Stat- Analysis
 • What factors can be improved to increase employee and/or business productivity across UK regions? 
+
+Extensions...
+Machine Learning
 • Can we predict overall UK productivity rates?
+
+
+What is Productivity:
+Productivity is commonly defined as a ratio between the output volume and the volume of inputs. 
+It measures how efficiently production inputs, such as labour and capital, are being used in an economy to 
+produce a given level of output. 
+
+
+1. Research
+2. Look into Data
+3. Define KPI
+4. Clean Data
+5. Wrangle Data / Explorlatory Analysis
+6. Stat-Analysis
+7. Predictive Model
