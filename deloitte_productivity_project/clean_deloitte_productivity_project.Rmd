@@ -2,6 +2,7 @@
 title: "Deloitte Productivity Cleaning Script"
 output: html_notebook
 ---
+### Library
 ```{r}
 library(tidyverse)
 library(janitor)
@@ -9,19 +10,7 @@ library(readxl)
 library(here)
 ```
 
-```{r}
-test_raw <- readxl::read_excel("data/data/International Labour Productivity - Europe.xls", sheet = "Table 1")
-
-
-tt <-read.delim2("data/deloitte_data_dictionary_2019.numbers", header = FALSE)
-```
-
-```{r}
-# Remove na rows
-test <- na.omit(test_raw)
-```
-
-# Functions
+### Functions
 ```{r}
 multiplesheets <- function(fname) {
    
@@ -39,10 +28,39 @@ multiplesheets <- function(fname) {
   
 # specifying the path name
 ```
+# Data for Productivity Estimates: UK
+```{r}
+# raw - Raw Files
+# pro - Productivity
+# Hist - Historical
+
+raw_pro_hist <- multiplesheets("data/raw_data/UK Labour Productivity - Historical.xls")
+
+raw_pro_regi <- multiplesheets("data/raw_data/UK Labour Productivity - Region by Industry.xls")
+
+raw_pro_indu <- multiplesheets("data/raw_data/UK Labour Productivity - Industry division.xls")
+
+raw_pro_area <- multiplesheets("data/raw_data/UK Labour productivity - Rural and urban areas.xls")
+
+raw_pro_publ <- multiplesheets("data/raw_data/UK Public Service Productivity.xls")
+
+raw_pro_educ <- multiplesheets("data/raw_data/UK Education Productivity.xls")
+
+# <- multiplesheets("data/raw_data/")
+
+# tt <- read.delim2("data/deloitte_data_dictionary_2019.numbers", header = FALSE)
+```
 
 ```{r}
-test <-multiplesheets("data/data/International Labour Productivity - Europe.xls")
+# Remove na rows
+test <- na.omit(test_raw)
+```
+
+
+
+```{r}
+
 
 test1 <- test$`Table 1`
-```
+``` 
 
