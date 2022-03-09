@@ -8,6 +8,7 @@ library(tidyverse)
 library(janitor)
 library(readxl)
 library(here)
+library(lubridate)
 ```
 
 ### Functions
@@ -35,33 +36,29 @@ multiplesheets <- function(fname) {
 # pro - Productivity
 # Hist - Historical
 
-raw_pro_hist <- multiplesheets(here("data/raw_data/UK Labour Productivity - Historical.xls"))
+raw_pro_hist <- multiplesheets(here("data/raw_data/uk_labour_productivity_historical.xls"))
 
-raw_pro_regi <- multiplesheets(here("data/raw_data/UK Labour Productivity - Region by Industry.xls"))
+raw_pro_regi <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Region by Industry.xls"))
 
-raw_pro_indu <- multiplesheets(here("data/raw_data/UK Labour Productivity - Industry division.xls"))
+raw_pro_indu <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Industry division.xls"))
 
-raw_pro_area <- multiplesheets(here("data/raw_data/UK Labour productivity - Rural and urban areas.xls"))
+raw_pro_area <- multiplesheets(here("data/raw_data/uk_labour productivity - Rural and urban areas.xls"))
 
-raw_pro_publ <- multiplesheets(here("data/raw_data/UK Public Service Productivity.xls"))
+raw_pro_educ <- multiplesheets(here("data/raw_data/uk_labour_productivity_education_2019.xlsx"))
 
-raw_pro_educ <- multiplesheets(here("data/raw_data/extra/education_2019.xlsx"))
-
-raw_pro_tim  <- multiplesheets(here("data/raw_data/UK Labour Productivity - Time Series.xls"))
+raw_pro_tim  <- multiplesheets(here("data/raw_data/uk_GDP Estimates - Time Series.xlsx"))
 
 # <- multiplesheets("data/raw_data/")
 
 # tt <- read.delim2("data/deloitte_data_dictionary_2019.numbers", header = FALSE)
-```
 
-# Meta Data for Productivity Estimates: UK & World
-```{r}
 raw_world_euro <- multiplesheets(here("data/raw_data/International Labour Productivity - Europe.xls"))
 
-raw_world_g7 <- multiplesheets(here("data/raw_data/International Labour Productivity - G7.xls"))
+raw_world_g7 <- multiplesheets(here("data/raw_data/international_labour_productivity_G7_2020.xlsx"))
 
-raw_world_multi <- multiplesheets(here("data/raw_data/Multifactor Productivity - OECD Countries.xls"))
+raw_world_multi <- multiplesheets(here("data/raw_data/OECD_multifactor_productivity.xls"))
 ```
+
 
 # Europe UK Data
 ```{r}
@@ -99,9 +96,68 @@ clean_world_multi <- as.data.frame(raw_world_multi$DP_LIVE_25012019175641197) %>
   clean_names() %>% 
   select(-flag_codes)
 ```
+
+# G7, whole economy, current price (CP) in GBP
 ```{r}
+# Annual output per hour worked 
+g7_prod <- raw_world_g7$Table_9 %>% 
+  na.omit() %>% 
+  row_to_names(row_number = 1) %>% 
+  clean_names() %>% 
+  pivot_longer(!year, names_to = "country", values_to = "productivity") %>% 
+  mutate(productivity = round(as.numeric(productivity), digits = 2))
+
+
+# GDP
+g7_gdp <- raw_world_g7$Table_2 %>% 
+  na.omit() %>% 
+  row_to_names(row_number = 1) %>% 
+  clean_names() %>% 
+  mutate(across(c(2:8), as.numeric)) %>% 
+  pivot_longer(!year, names_to = "country", values_to = "gdp")
+
 
 ```
 
+# G7 - Output per hours Productivity
+```{r}
+g7_prod_avg <- g7_prod %>% 
+  group_by(year) %>% 
+  summarise(productivity = mean(productivity)) %>% 
+  mutate(country = "g7_avg")
 
+g7_prod %>% 
+  rbind(g7_prod_avg) %>% 
+  ggplot()+
+  aes(x = year, y = productivity, group = country, colour = country)+
+  geom_point()+
+  geom_line()+
+  scale_linetype_manual(values = c("g7_avg" = "dotted"))+
+  labs(title = "Productivity in G7 Countries",
+       )+
+  xlab("Year")+
+  ylab("Output Per Hour Worked (£)")+
+  theme(axis.text.x = element_text(angle = 45))
+  # scale_color_manual(values = c("us" = "blue", "uk" = "red"))+
+```
+# G7 - GDP
+```{r}
+
+g7_gdp_avg <- g7_gdp %>% 
+  group_by(year) %>% 
+  summarise(g7_avg = mean(output_per_hour_worked))
+
+g7_gdp %>% 
+  ggplot()+
+  aes(x = year, y = output_per_hour_worked, group = country, colour = country)+
+  geom_point()+
+  geom_line()+
+  geom_line(aes(x = g7_gdp_avg$year, y = g7_gdp_avg$g7_avg, type = 2 ))+
+  scale_color_manual(values = c("us" = "blue", "uk" = "red"))+
+  labs(title = "GDP in G7 Countries",
+       )+
+  xlab("Year")+
+  ylab("GDP (in million £)")+
+  theme(axis.text.x = element_text(angle = 45))
+```
 
