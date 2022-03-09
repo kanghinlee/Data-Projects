@@ -35,19 +35,19 @@ multiplesheets <- function(fname) {
 # pro - Productivity
 # Hist - Historical
 
-raw_pro_hist <- multiplesheets("data/raw_data/UK Labour Productivity - Historical.xls")
+raw_pro_hist <- multiplesheets(here("data/raw_data/UK Labour Productivity - Historical.xls"))
 
-raw_pro_regi <- multiplesheets("data/raw_data/UK Labour Productivity - Region by Industry.xls")
+raw_pro_regi <- multiplesheets(here("data/raw_data/UK Labour Productivity - Region by Industry.xls"))
 
-raw_pro_indu <- multiplesheets("data/raw_data/UK Labour Productivity - Industry division.xls")
+raw_pro_indu <- multiplesheets(here("data/raw_data/UK Labour Productivity - Industry division.xls"))
 
-raw_pro_area <- multiplesheets("data/raw_data/UK Labour productivity - Rural and urban areas.xls")
+raw_pro_area <- multiplesheets(here("data/raw_data/UK Labour productivity - Rural and urban areas.xls"))
 
-raw_pro_publ <- multiplesheets("data/raw_data/UK Public Service Productivity.xls")
+raw_pro_publ <- multiplesheets(here("data/raw_data/UK Public Service Productivity.xls"))
 
-raw_pro_educ <- multiplesheets("data/raw_data/UK Education Productivity.xls")
+raw_pro_educ <- multiplesheets(here("data/raw_data/extra/education_2019.xlsx"))
 
-raw_pro_labo <- multiplesheets("data/raw_data/UK Labour Productivity - Time Series.xls")
+raw_pro_tim  <- multiplesheets(here("data/raw_data/UK Labour Productivity - Time Series.xls"))
 
 # <- multiplesheets("data/raw_data/")
 
@@ -56,20 +56,46 @@ raw_pro_labo <- multiplesheets("data/raw_data/UK Labour Productivity - Time Seri
 
 # Meta Data for Productivity Estimates: UK & World
 ```{r}
-raw_world_euro <- multiplesheets("data/raw_data/International Labour Productivity - Europe.xls")
+raw_world_euro <- multiplesheets(here("data/raw_data/International Labour Productivity - Europe.xls"))
 
-raw_world_g7 <- multiplesheets("data/raw_data/International Labour Productivity - G7.xls")
+raw_world_g7 <- multiplesheets(here("data/raw_data/International Labour Productivity - G7.xls"))
 
-raw_world_multi <- multiplesheets("data/raw_data/Multifactor Productivity - OECD Countries.xls")
+raw_world_multi <- multiplesheets(here("data/raw_data/Multifactor Productivity - OECD Countries.xls"))
 ```
 
+# Europe UK Data
 ```{r}
-raw_world_g7
+# Europe Output Per Hour
+# Table 1: Output per hour by industry, €
+
+clean_world_euro_oph <- raw_world_euro$`Table 1` %>% 
+  na.omit() %>% 
+  row_to_names(row_number = 1) %>% 
+  clean_names()
+
+# Table 2: Labour Productivity Growth by industry 2014-16, %
+clean_world_euro_growth <- raw_world_euro$`Table 2` %>% 
+  na.omit() %>% 
+  row_to_names(row_number = 1) %>% 
+  clean_names()
+
+```
+
+
+# Time Series
+```{r}
+clean_pro_time_year <- raw_pro_tim$data %>% 
+  clean_names() %>% 
+  filter(!grepl(' Q+[0-9]', title))
+
+clean_pro_time_quart <- raw_pro_tim$data %>% 
+  clean_names() %>% 
+  filter(!grepl('^\\d{4}$', title))
 ```
 
 
 ```{r}
-clean_world_multi <-as.data.frame(raw_world_multi$DP_LIVE_25012019175641197) %>% 
+clean_world_multi <- as.data.frame(raw_world_multi$DP_LIVE_25012019175641197) %>% 
   clean_names() %>% 
   select(-flag_codes)
 ```
@@ -78,18 +104,4 @@ clean_world_multi <-as.data.frame(raw_world_multi$DP_LIVE_25012019175641197) %>%
 ```
 
 
-
-
-```{r}
-# Remove na rows
-test <- na.omit(test_raw)
-```
-
-
-
-```{r}
-
-
-test1 <- test$`Table 1`
-``` 
 
