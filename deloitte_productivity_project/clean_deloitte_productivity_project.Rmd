@@ -28,7 +28,8 @@ multiplesheets <- function(fname) {
   
 # specifying the path name
 ```
-# Data for Productivity Estimates: UK
+
+# Meta Data for Productivity Estimates: UK
 ```{r}
 # raw - Raw Files
 # pro - Productivity
@@ -46,10 +47,38 @@ raw_pro_publ <- multiplesheets("data/raw_data/UK Public Service Productivity.xls
 
 raw_pro_educ <- multiplesheets("data/raw_data/UK Education Productivity.xls")
 
+raw_pro_labo <- multiplesheets("data/raw_data/UK Labour Productivity - Time Series.xls")
+
 # <- multiplesheets("data/raw_data/")
 
 # tt <- read.delim2("data/deloitte_data_dictionary_2019.numbers", header = FALSE)
 ```
+
+# Meta Data for Productivity Estimates: UK & World
+```{r}
+raw_world_euro <- multiplesheets("data/raw_data/International Labour Productivity - Europe.xls")
+
+raw_world_g7 <- multiplesheets("data/raw_data/International Labour Productivity - G7.xls")
+
+raw_world_multi <- multiplesheets("data/raw_data/Multifactor Productivity - OECD Countries.xls")
+```
+
+```{r}
+raw_world_g7
+```
+
+
+```{r}
+clean_world_multi <-as.data.frame(raw_world_multi$DP_LIVE_25012019175641197) %>% 
+  clean_names() %>% 
+  select(-flag_codes)
+```
+```{r}
+
+```
+
+
+
 
 ```{r}
 # Remove na rows
