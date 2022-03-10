@@ -1,75 +1,110 @@
 ---
-title: "README - UK Productivity Project"
-author: "KangHin Lee"
-date: "09/03/2022"
-output: html_document
+title: "Final project documentation template - PDA"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    df_print: paged
+    pdf_document: default
+  word_document:
+    toc: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# Template
 
-GOAL/ Business Questions:
-Our main business question is generally: How can we improve productivity within Scotland and the UK overall? 
+<br>
+
+## Context
+
+#### Business intelligence and data-driven decision making
+
+What insights can the business/organisation gain from your analysis and how will your analysis help the business/organisation make better decisions? 
+
+#### Domain knowledge and the business context
+
+Briefly describe the business/organisation and where your analysis fits within its aims/activity. 
+
+## Data
+
+#### Internal and external data sources
+
+Briefly describe your data sources and which were internal (provided by the organisation) and external (not sourced from the organisation's data)
+
+- The original data sources were donated by Deloitte, extracted from [Equifax Ignite Direct](https://www.equifax.co.uk/) data platform.
+
+- Additional data sources are extracted via [OECD.stat](https://stats.oecd.org/) and [UK National Statistics](https://www.ons.gov.uk/).
+
+#### Types of data & Data formats
+
+What kind of data did you work with? E.g. categorical and numerical data and their sub-types.
+What format did your data come in? E.g. all downloaded flat files (CSV) or any data from APIs, scraping etc.
+
+- Data sets used for analysis contained Time series, Date, Doubles, Numeric & Character. The data sources are contained in Excel files (.xls, .csv, .xlsx etc...) with multiple embedded tabs.
+
+#### Data quality and bias
+
+Briefly describe the quality of the data and whether you have any reasons to suggest the data is biased e.g. only data from a specific demographic even though a broader demographic would be of interest to the organisation.
+
+The analysis can only provided a high level overview into the topics as there are many confounding variables that are not being taken into consideration per countries. The analysis could be biased for those
+
+## Ethics
+
+#### Ethical issues in data sourcing and extraction
+
+Do you have any ethical concerns regarding the sourcing and extraction of your data? 
+
+#### Ethical implications of business requirements
+
+Are there any ethical implications of the business requirements?
+
+## Analysis
+
+#### Stages in the data analysis process
+
+What were the main stages in your data analysis process?
+
+#### Tools for data analysis
+
+What were the main tools you used for your analysis?
+
+#### Descriptive, diagnostic, predictive and prescriptive analysis
+
+Please report under which of the below categories your analysis falls **and why** (can be more than one) 
+
+::: {.emphasis}
+**Descriptive Analytics** tells you what happened in the past.
+
+**Diagnostic Analytics** helps you understand why something happened in the past.
+
+**Predictive Analytics** predicts what is most likely to happen in the future.
+
+**Prescriptive Analytics** recommends actions you can take to affect those outcomes.
+:::
 
 
-3 MVPs are set up to answer our business questions:
+# PDA Outcomes
 
-Exploratory Analysis
-• Which industries are lagging behind in terms of productivity and how could they catch up? 
+### Working with Data (J4Y6 35)
 
-Stat- Analysis
-• What factors can be improved to increase employee and/or business productivity across UK regions? 
+#### 1. Plan an analysis to provide business intelligence
 
-Extensions..
-• Can we predict overall UK productivity rates?
-- Time series forcast of UK's productivity rates
+-   1.1 Business intelligence and data-driven decision making
+-   1.2 Domain knowledge and the business context
+-   1.4 Internal and external data sources
+-   1.5 Data quality
+-   1.6 Stages in the data analysis process
+-   1.7 Descriptive, diagnostic, predictive and prescriptive analysis
+-   1.9 Ethical implications of business requirements
+-   1.10 Tools for data analysis
 
-What is Productivity:
-Productivity is commonly defined as a ratio between the output volume and the volume of inputs. 
-It measures how efficiently production inputs, such as labour and capital, are being used in an economy to 
-produce a given level of output. 
+#### 2. Extract data from a variety of sources
 
-Productivity:
-- GDP Per hour worked
+-   2.1 Tools for querying data sources
+-   2.2 Types of data (categorical and numerical data and their sub-types)
+-   2.3 Data formats
+-   2.6 Data quality including data bias
+-   2.7 Ethical issues in data sourcing and extraction
 
+#### 4. Analyse data to provide business intelligence
 
-OECD - Organisation for Economic Co-operation and Development
-
-
-
-Graphs
-G7 - UK - Other G7 countries
-
-UK Productivity Time Series Forcast
-
-UK look into producutivity in different regions / divisions
-
-
-
-Impact of changing average Wages vs changing minimum wages
-
-Education level over/well-matched/under qualify for their job.
-*OECD_quality_of_human_capital
-
-Preminarly Step:
-1. Research
-2. Look into Data
-3. Define KPI
-4. Clean Data
-5. Wrangle Data / Explorlatory Analysis
-6. Stat-Analysis
-7. Predictive Model
-
-
-Challenges:
-Select Datasets
-Data inconsistency
-Technical Acryonoms
-Methodologies applied to productivity
-
-Original Source:
-The original dataset was donated by Deloitte, extracted from Equifax Ignite Direct data platform. ... https://www.equifax.co.uk/
-Additional Data source:
-OECD.stat ... https://stats.oecd.org/
-National Statistics... https://www.ons.gov.uk/
+-   4.7 Role of domain knowledge in interpreting analyses

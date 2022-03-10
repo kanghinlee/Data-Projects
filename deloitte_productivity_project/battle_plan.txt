@@ -2,11 +2,9 @@ GOAL/ Business Questions:
 Our main business question is generally: How can we improve productivity within Scotland and the UK overall? 
 
 3 MVPs are set up to answer our business questions:
-Explorlatory Analysis
+
 • Which industries are lagging behind in terms of productivity and how could they catch up? 
-Stat- Analysis
 • What factors can be improved to increase employee and/or business productivity across UK regions? 
-Extensions..
 • Can we predict overall UK productivity rates?
 
 What is Productivity:
@@ -17,6 +15,7 @@ produce a given level of output.
 
 1. UK Insight
 - High level productivity UK against the world ... reason for this project
+- GDP against the world
 - Growth rate
 
 
