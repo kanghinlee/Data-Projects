@@ -42,7 +42,10 @@ multiplesheets <- function(fname) {
 
 raw_sic_identify <- multiplesheets(here("data/raw_data/sic07_identifer.xlsx")) 
 
-sic_identify <- raw_sic_identify$Sheet2 %>% 
+sic_identify <- raw_sic_identify$Sheet1 %>% 
+  rename_with(~ gsub('Sheet2.', '', .x))
+
+sic_identify_2 <- raw_sic_identify$Sheet2 %>% 
   rename_with(~ gsub('Sheet2.', '', .x))
 
 raw_pro_indu <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Industry division_2021.xlsx"))
@@ -115,14 +118,15 @@ g7_prod <- raw_world_g7$Table_9 %>%
   row_to_names(row_number = 1) %>% 
   clean_names() %>% 
   pivot_longer(!year, names_to = "country", values_to = "productivity") %>% 
-  mutate(productivity = round(as.numeric(productivity), digits = 2))
+  mutate(productivity = round(as.numeric(productivity), digits = 2),
+         country = str_to_title(country))
 
 g7_prod_avg <- g7_prod %>% 
   group_by(year) %>% 
   summarise(productivity = round(mean(productivity), digits = 2))
 
 g7_prod %>% 
-  filter(country == "uk") %>% 
+  filter(country == "Uk") %>% 
   ggplot()+
   aes(x = year, y = productivity, group = country, colour = "brown2")+
   geom_point()+
@@ -185,19 +189,19 @@ raw_oecd_gva <- read_csv("data/raw_data/OECD_gva.csv") %>%
 oecd_gva_g7 <- raw_oecd_gva %>% 
   filter(country %in% c("Canada", "France", "Germany", "Italy", "Japan", "United Kingdom", "United States")  ) %>% 
   select(-c(2:41)) %>% 
-    pivot_longer(!country, names_to = "year", values_to = "gvd") %>% 
+    pivot_longer(!country, names_to = "year", values_to = "gva") %>% 
   drop_na() %>% 
   # Exchange rate ~$1 = £0.77 and in millions
-  mutate(gvd = gvd*0.77 / 1000000)
+  mutate(gva = gva*0.77 / 1000000)
 
 
 oecd_gva_g7 %>% 
   ggplot()+
-  aes(x = year, y = gvd, group = country, colour = country)+
+  aes(x = year, y = gva, group = country, colour = country)+
   geom_line()+
-  labs(title = "GVD in G7 Countries")+
+  labs(title = "GVA in G7 Countries")+
   xlab("Year")+
-  ylab("GVD (in million £)")+
+  ylab("GVA (in million £)")+
   scale_color_manual(values = c("United Kingdom" = "red", "France" = "green"))+
   theme(axis.text.x = element_text(angle = 45))
 
@@ -210,10 +214,41 @@ g7_prod %>%
   xlab("Year")+
   ylab("Output Per Hour Worked (£)")+
   theme(axis.text.x = element_text(angle = 45))+
-  scale_color_manual(values = c("uk" = "red", "france" = "green"))
+  scale_color_manual(values = c("Uk" = "red", "France" = "green"))
+
+
+uk_france_diff_prod <- g7_prod %>% 
+  filter(country %in% c("Uk", "France")) %>% 
+  pivot_wider(names_from = country, values_from = productivity) %>% 
+  mutate(diff_in_prod = (France / Uk)-1)
+
+uk_france_diff_gva <- oecd_gva_g7 %>% 
+    filter(country %in% c("United Kingdom", "France")) %>% 
+  pivot_wider(names_from = country, values_from = gva) %>% 
+  rename(Uk = 'United Kingdom') %>% 
+  mutate(diff_in_gva = (France / Uk)-1)
+
+uk_france_diff_prod
+uk_france_diff_gva
+
+
+uk_france_diff_prod %>% 
+  cbind( diff_in_gva = uk_france_diff_gva$diff_in_gva) %>% 
+  pivot_longer(!c(1:3), names_to = "factor", values_to = "diff_percent") %>% 
+  ggplot()+
+    aes(x = year, y = diff_percent, group = factor, colour = factor)+
+    geom_line()+
+    geom_point()+
+  geom_hline(yintercept = 0, linetype = "dashed")+
+  labs(title = "Difference in GVA & Productivity between France and UK")+
+  xlab("Year")+
+  ylab("Percentage Difference (%)")+
+  theme(axis.text.x = element_text(angle = 45))
 
 ```
-
+Note: Among all the G7 countries, We will be using France as a comparison and find out factors that we can increase productivity in.
+France has a similar size in terms of the country and population. In the graph of difference in GVA and Productivity, you can see from the red line, GVA, that France has a lower GVA (net output) when compared to the UK, and yet the productivity gap is increasing since 2008 and onwards.
+In this comparison, we can reduce any confounding variables...
 
 
 
@@ -267,12 +302,116 @@ O-Q	 Public administration, defense, education, human health and social work act
 R-U	 Arts, entertainment and recreation; other service activities
 
 
+# Minimum and Average Wage
+```{r}
+raw_oecd_min_wage <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
+
+oecd_min_wage <- raw_oecd_min_wage$`OECD.Stat export` %>% 
+  row_to_names(row_number = 1) %>% 
+  filter(Country %in% c("France", "United Kingdom")) %>% 
+  pivot_longer(!1, names_to = "year", values_to = "min_wage") %>% 
+  clean_names() %>% 
+  mutate(min_wage = round(as.numeric(min_wage), digits = 2))
+
+
+
+raw_oecd_avg_wage <- multiplesheets(here("data/raw_data/OECD_average_wages_2020.xlsx"))
+
+oecd_avg_wage <- raw_oecd_avg_wage$`OECD.Stat export` %>% 
+  row_to_names(row_number = 1) %>% 
+  filter(Unit %in% "US Dollar, 2020", Country %in% c("France", "United Kingdom")) %>% 
+  select(-Unit) %>% 
+  pivot_longer(!1, names_to = "year", values_to = "avg_wage") %>% 
+  clean_names()%>% 
+  mutate(avg_wage = round(as.numeric(avg_wage), digits = 2))
+
+oecd_wage <- oecd_min_wage %>% 
+  left_join(oecd_avg_wage, by = c("year", "country"))
+
+```
+
+# UK Indsutry by Region
+
+
+```{r}
+raw_uk_indus_region <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Region by Industry_2019.xls"))
+```
 
 ```{r}
 
+uk_indus_region <- raw_uk_indus_region$`OpH (value)` %>% 
+  slice(-c(1:4))
+
+uk_indus_region[2,1] <- "year"
+
+uk_indus_region_head <- uk_indus_region[1:2,] %>% 
+  summarise_all(str_c, collapse=', ') %>% 
+  rbind(uk_indus_region) %>% 
+  row_to_names(row_number = 1, remove_row = FALSE)
+
+uk_indus_region <- uk_indus_region_head[4:nrow(uk_indus_region_head),] %>% 
+  pivot_longer(!'Region, year', names_to = "country", values_to = "oph") %>% 
+  separate(country, c("region", "industry"), ", ") %>% 
+  separate(industry, c("sic", "industry"), ": ") %>% 
+  mutate(oph = round(as.numeric(oph), digits = 2)) %>% 
+  rename("year" = 'Region, year') %>% 
+  mutate(is_scot = if_else(region == "Scotland", "scotland", "other_uk_regions"),
+         countries = case_when(
+                  region == "Scotland" ~ "scotland",
+                  region == "Wales" ~ "wales",
+                  region == "Northern Ireland" ~ "northern_ireland",
+                  region == "UK" ~ "uk",
+                  TRUE ~ "england"
+         ))
+
+us_indus_scot <- uk_indus_region %>% 
+  filter(region != "UK") %>% 
+  group_by(year, is_scot, sic) %>% 
+  summarise(avg_oph = mean(oph))
+
+# Compare Scotland with other regions in UK for "ALL INDUSTRIES"
+us_indus_scot_all <- uk_indus_region %>%
+  filter(sic %in% "All Industries") %>% 
+  group_by(year, countries) %>% 
+  summarise(avg_oph = mean(oph)) %>% 
+  ungroup() %>% 
+  group_by(countries) %>% 
+  arrange(countries, year) %>% 
+  mutate(rate = (avg_oph - lag(avg_oph))/lag(avg_oph)) %>% 
+  ungroup() %>% 
+  mutate(
+    moving_avg_rate = slide_dbl(
+      .x = rate,
+      .f = ~mean(.,na.rm = TRUE),
+      # 2 weeks moving average
+      .before = 2
+                        ))
 
 
+us_indus_scot_all %>% 
+  filter(countries %in%  c("scotland", "uk")) %>% 
+  ggplot()+
+  aes(x = year, y = moving_avg_rate, group = countries, colour = countries, linetype = countries)+
+  geom_line()+
+  geom_point()+
+  # geom_line(aes(x = year, y = rate, group = countries, colour = countries))+
+  theme(axis.text.x = element_text(angle = 45))+
+  labs(title = "2 Years Moving Average Productivity Growth Rate in Scotland and the UK")+
+  xlab("Year")+
+  ylab("Output Per Hour Worked (£)")+
+  theme(axis.text.x = element_text(angle = 45))+
+  scale_colour_manual(values = c("scotland" = "steelblue", "uk" = "black"))+
+  scale_linetype_manual(values = c("scotland" = "solid", "uk" = "dashed"))
 ```
+```{r}
+uk_indus_scot_indus_cat <- uk_indus_region %>% 
+  mutate(sic = substr(sic,1,1)) %>% 
+  left_join(sic_identify_2, by = c("sic" = "sic_cat")) %>% 
+  select(-c("industry", "sic", "region", "is_scot"))
+  filter(countries %in%  c("uk", "scotland")) %>% 
+```
+
+
 
 ```{r}
 # # GDP
