@@ -135,7 +135,8 @@ g7_prod %>%
   labs(title = "Productivity in G7 Countries")+
   xlab("Year")+
   ylab("Output Per Hour Worked (£)")+
-  theme(axis.text.x = element_text(angle = 45))
+  theme(axis.text.x = element_text(angle = 45))+
+  theme(legend.position="bottom")
 ```
 
 # G7 - Output Per Hour wored growth
@@ -174,11 +175,28 @@ g7_prod_growth %>%
   aes(x = year, y = moving_avg, group = country, colour = country)+
   geom_point()+
   geom_line()+
-  geom_line(aes(x = g7_avg_prod_growth$year, y = g7_avg_prod_growth$moving_avg, group = country, colour = country), linetype = 2, colour = "black")+
-  labs(title = "2 Years Moving Average Grow Rate comparison between UK and Other G7 Countries")+
+  geom_line(aes(x = g7_avg_prod_growth$year, y = g7_avg_prod_growth$moving_avg, group = country, colour = country), linetype = 2, colour = "black", size = 1)+
+  geom_vline(aes(xintercept = "2008"), linetype = "longdash", alpha = 0.5)+
+  geom_vline(aes(xintercept = "2018"), linetype = "longdash", alpha = 0.5)+
+    annotate(geom = "text",
+             label = c("Recession"),
+             x = c("2005"),
+             y = c(2.25),
+             vjust = 1,
+           hjust = -.05) +
+    annotate(geom = "text",
+             label = c("Pandemic"),
+             x = c("2015"),
+             y = c(2.25),
+             vjust = 1,
+           hjust = -.05) +  
+  
+  labs(title = "2 Years Moving Average Grow Rate",
+       subtitle = "Comparison between UK and Other G7 Countries")+
   xlab("Year")+
   ylab("Growth Rate Per year (%)")+
-  theme(axis.text.x = element_text(angle = 45))
+  theme(axis.text.x = element_text(angle = 45))+
+  theme(legend.position="bottom")
 
 ```
 # G7 - GVD
@@ -227,9 +245,6 @@ uk_france_diff_gva <- oecd_gva_g7 %>%
   pivot_wider(names_from = country, values_from = gva) %>% 
   rename(Uk = 'United Kingdom') %>% 
   mutate(diff_in_gva = (France / Uk)-1)
-
-uk_france_diff_prod
-uk_france_diff_gva
 
 
 uk_france_diff_prod %>% 
@@ -361,8 +376,7 @@ uk_indus_region <- uk_indus_region_head[4:nrow(uk_indus_region_head),] %>%
                   region == "Wales" ~ "wales",
                   region == "Northern Ireland" ~ "northern_ireland",
                   region == "UK" ~ "uk",
-                  TRUE ~ "england"
-         ))
+                  TRUE ~ "england"))
 
 us_indus_scot <- uk_indus_region %>% 
   filter(region != "UK") %>% 
@@ -396,19 +410,35 @@ us_indus_scot_all %>%
   geom_point()+
   # geom_line(aes(x = year, y = rate, group = countries, colour = countries))+
   theme(axis.text.x = element_text(angle = 45))+
-  labs(title = "2 Years Moving Average Productivity Growth Rate in Scotland and the UK")+
+    geom_vline(aes(xintercept = "2008"), linetype = "longdash", alpha = 0.5)+
+  geom_vline(aes(xintercept = "2018"), linetype = "longdash", alpha = 0.5)+
+    annotate(geom = "text",
+             label = c("Recession"),
+             x = c("2005"),
+             y = c(0.06),
+             vjust = 1,
+           hjust = -.05) +
+    annotate(geom = "text",
+             label = c("Pandemic"),
+             x = c("2015"),
+             y = c(0.06),
+             vjust = 1,
+           hjust = -.05) +  
+  labs(title = "2 Years Moving Average Productivity Growth Rate",
+       subtitle = "Comparsion between Scotland & the UK")+
   xlab("Year")+
   ylab("Output Per Hour Worked (£)")+
   theme(axis.text.x = element_text(angle = 45))+
   scale_colour_manual(values = c("scotland" = "steelblue", "uk" = "black"))+
-  scale_linetype_manual(values = c("scotland" = "solid", "uk" = "dashed"))
+  scale_linetype_manual(values = c("scotland" = "solid", "uk" = "dashed"))+
+  theme(legend.position="bottom")
 ```
 ```{r}
 uk_indus_scot_indus_cat <- uk_indus_region %>% 
   mutate(sic = substr(sic,1,1)) %>% 
   left_join(sic_identify_2, by = c("sic" = "sic_cat")) %>% 
   select(-c("industry", "sic", "region", "is_scot"))
-  filter(countries %in%  c("uk", "scotland")) %>% 
+  filter(countries %in%  c("uk", "scotland"))
 ```
 
 
