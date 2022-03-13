@@ -24,40 +24,45 @@ What insights can the business/organisation gain from your analysis and how will
 
 Briefly describe the business/organisation and where your analysis fits within its aims/activity. 
 
+The project is 
 ## Data
 
 #### Internal and external data sources
 
-Briefly describe your data sources and which were internal (provided by the organisation) and external (not sourced from the organisation's data)
+<!-- Briefly describe your data sources and which were internal (provided by the organisation) and external (not sourced from the organisation's data) -->
 
-- The original data sources were donated by Deloitte, extracted from [Equifax Ignite Direct](https://www.equifax.co.uk/) data platform.
-
-- Additional data sources are extracted via [OECD.stat](https://stats.oecd.org/) and [UK National Statistics](https://www.ons.gov.uk/).
+The original data sources were donated by Deloitte, extracted from [Equifax Ignite Direct](https://www.equifax.co.uk/) data platform. Additional data sources are extracted via [OECD.stat](https://stats.oecd.org/) and [UK National Statistics](https://www.ons.gov.uk/).
 
 #### Types of data & Data formats
 
-What kind of data did you work with? E.g. categorical and numerical data and their sub-types.
-What format did your data come in? E.g. all downloaded flat files (CSV) or any data from APIs, scraping etc.
+<!-- What kind of data did you work with? E.g. categorical and numerical data and their sub-types. -->
+<!-- What format did your data come in? E.g. all downloaded flat files (CSV) or any data from APIs, scraping etc. -->
 
-- Data sets used for analysis contained Time series, Date, Doubles, Numeric & Character. The data sources are contained in Excel files (.xls, .csv, .xlsx etc...) with multiple embedded tabs.
+Data sources used for this project contained Time series, Date, Doubles, Numeric & Character. The data sources are stored in Excel files (.xls, .csv, .xlsx etc...) with multiple embedded tabs.
 
 #### Data quality and bias
 
 Briefly describe the quality of the data and whether you have any reasons to suggest the data is biased e.g. only data from a specific demographic even though a broader demographic would be of interest to the organisation.
 
-The analysis can only provided a high level overview into the topics as there are many confounding variables that are not being taken into consideration per countries. The analysis could be biased for those
+The analysis can only provided a high level overview into the topics. As in real life there is no one way to measure the real-productiviy as different industries have different procedures to follow. There are many confounding variables that are not being taken into consideration during the analysis. The analysis could be biased for those
 
 ## Ethics
 
 #### Ethical issues in data sourcing and extraction
 
-Do you have any ethical concerns regarding the sourcing and extraction of your data? 
+<!-- Do you have any ethical concerns regarding the sourcing and extraction of your data?  -->
+
+The data sources can be found in open source websites and only contain data per country or industry. No individual data set is being used for this analysis with no ethical concerns.
 
 #### Ethical implications of business requirements
 
-Are there any ethical implications of the business requirements?
+<!-- Are there any ethical implications of the business requirements? -->
+
+The analysis provided a high-level overview of how productivity can be improved per industry/in Scotland/in the UK. 
 
 ## Analysis
+
+#### Challenges
 
 #### Stages in the data analysis process
 
@@ -69,17 +74,7 @@ What were the main tools you used for your analysis?
 
 #### Descriptive, diagnostic, predictive and prescriptive analysis
 
-Please report under which of the below categories your analysis falls **and why** (can be more than one) 
-
-::: {.emphasis}
-**Descriptive Analytics** tells you what happened in the past.
-
-**Diagnostic Analytics** helps you understand why something happened in the past.
-
-**Predictive Analytics** predicts what is most likely to happen in the future.
-
-**Prescriptive Analytics** recommends actions you can take to affect those outcomes.
-:::
+The project's aim is to find out factors that can improve productivity in the UK and pin-point which industries are laggin behind in terms of productivity. The analysis required analysing multiple data sources to understand how different factors may affect productivity in the past. Thus, the analysis approach will fall into The Diagnostic Analytics catagory.
 
 
 # PDA Outcomes

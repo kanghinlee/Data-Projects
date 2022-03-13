@@ -18,8 +18,22 @@ produce a given level of output.
 - GDP against the world
 - Growth rate
 
+Using France as a comparsion as t
+Population in France 67.39 mil, UK - 67.22
 
-2. Factors to increase productivity
+2. Indsutries that is laggin behind
+- Compare with France and find out what factors are invovled.
+
+
+3. ... within the laggin behind industry, what are the factors to increase productivity
+ Focus on Labour Productivity -- Using GVA
+- Tech
+- Mental Health
+- Umemployment rate
+- Average wage and minimum wage
+- GDP
+- Education level
+
 
 
 Productivity:
@@ -66,3 +80,14 @@ The original dataset was donated by Deloitte, extracted from Equifax Ignite Dire
 Additional Data source:
 OECD.stat ... https://stats.oecd.org/
 National Statistics... https://www.ons.gov.uk/
+
+
+A	Agriculture, forestry and fishing
+B-F	Industry (except construction)
+G-I	Wholesale and retail trade, transport, accommodation and food service activities
+J	Information and communication
+K	Financial and insurance activities
+M-N	Professional, scientific and technical activities; administrative and support service activities
+O-Q	Public administration, defence, education, human health and social work activities
+R-U	Arts, entertainment and recreation; other service activities
+

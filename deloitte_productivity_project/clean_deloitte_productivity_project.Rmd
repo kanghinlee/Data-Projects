@@ -9,6 +9,10 @@ library(janitor)
 library(readxl)
 library(here)
 library(lubridate)
+library(slider)
+library(infer)
+library(scales)
+library(zoo)
 ```
 
 ### Functions
@@ -36,11 +40,16 @@ multiplesheets <- function(fname) {
 # pro - Productivity
 # Hist - Historical
 
+raw_sic_identify <- multiplesheets(here("data/raw_data/sic07_identifer.xlsx")) 
+
+sic_identify <- raw_sic_identify$Sheet2 %>% 
+  rename_with(~ gsub('Sheet2.', '', .x))
+
+raw_pro_indu <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Industry division_2021.xlsx"))
+
 raw_pro_hist <- multiplesheets(here("data/raw_data/uk_labour_productivity_historical.xls"))
 
 raw_pro_regi <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Region by Industry.xls"))
-
-raw_pro_indu <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Industry division.xls"))
 
 raw_pro_area <- multiplesheets(here("data/raw_data/uk_labour productivity - Rural and urban areas.xls"))
 
@@ -115,49 +124,19 @@ g7_prod_avg <- g7_prod %>%
 g7_prod %>% 
   filter(country == "uk") %>% 
   ggplot()+
-  aes(x = year, y = productivity, group = country, colour = country)+
+  aes(x = year, y = productivity, group = country, colour = "brown2")+
   geom_point()+
   geom_line()+
-  geom_line(aes(x = g7_prod_avg$year, y = g7_prod_avg$productivity), linetype = 2)+
+  geom_line(aes(x = g7_prod_avg$year, y = g7_prod_avg$productivity, group = country), linetype = 2, colour = "black")+
   labs(title = "Productivity in G7 Countries")+
   xlab("Year")+
   ylab("Output Per Hour Worked (£)")+
   theme(axis.text.x = element_text(angle = 45))
-  # scale_color_manual(values = c("us" = "steelblue", "uk" = "red", "japan" = "green"))
-```
-# G7 - GDP
-```{r}
-# GDP
-g7_gdp <- raw_world_g7$Table_2 %>% 
-  na.omit() %>% 
-  row_to_names(row_number = 1) %>% 
-  clean_names() %>% 
-  mutate(across(c(2:8), as.numeric)) %>% 
-  pivot_longer(!year, names_to = "country", values_to = "gdp")
-
-g7_gdp_avg <- g7_gdp %>% 
-  filter(country != "uk") %>% 
-  group_by(year) %>% 
-  summarise(g7_avg = mean(gdp))
-
-
-g7_gdp %>% 
-  filter(country == "uk"  ) %>% 
-  ggplot()+
-  geom_point(aes(x = year, y = gdp, group = country, colour = country))+
-  geom_line(aes(x = year, y = gdp, group = country, colour = country))+
-  geom_line(aes(x = g7_gdp_avg$year, y = g7_gdp_avg$g7_avg, group = country, colour = country), linetype = 2)+
-  labs(title = "GDP comparison between UK and G7 Countries")+
-  xlab("Year")+
-  ylab("GDP (in million £)")+
-  theme(axis.text.x = element_text(angle = 45))
-  # scale_color_manual(values = c("us" = "steelblue", "uk" = "red", "japan" = "green"))
-    
 ```
 
 # G7 - Output Per Hour wored growth
 ```{r}
-g7_prod_growth <- raw_world_g7$Table_16%>% 
+g7_prod_growth <- raw_world_g7$Table_16 %>% 
   na.omit() %>% 
   row_to_names(row_number = 1) %>% 
   clean_names()%>% 
@@ -165,11 +144,158 @@ g7_prod_growth <- raw_world_g7$Table_16%>%
   pivot_longer(!year, names_to = "country", values_to = "growth_rate")
 
 
-g7_avg_prod_growth %>% 
+g7_avg_prod_growth <- g7_prod_growth%>% 
   filter(country != "uk") %>% 
   group_by(year) %>% 
-  summarise(g7_avg = mean(gdp))
+  summarise(g7_avg = mean(growth_rate))%>% 
+   mutate(
+    moving_avg = slide_dbl(
+      .x = g7_avg,
+      .f = ~mean(.,na.rm = TRUE),
+# 2 weeks moving average
+      .before = 2
+    )  )
+
+
+g7_prod_growth %>% 
+  filter(country == "uk") %>% 
+   mutate(
+    moving_avg = slide_dbl(
+      .x = growth_rate,
+      .f = ~mean(.,na.rm = TRUE),
+      # 2 weeks moving average
+      .before = 2
+                        )) %>% 
+  ggplot()+
+  aes(x = year, y = moving_avg, group = country, colour = country)+
+  geom_point()+
+  geom_line()+
+  geom_line(aes(x = g7_avg_prod_growth$year, y = g7_avg_prod_growth$moving_avg, group = country, colour = country), linetype = 2, colour = "black")+
+  labs(title = "2 Years Moving Average Grow Rate comparison between UK and Other G7 Countries")+
+  xlab("Year")+
+  ylab("Growth Rate Per year (%)")+
+  theme(axis.text.x = element_text(angle = 45))
+
+```
+# G7 - GVD
+```{r}
+raw_oecd_gva <- read_csv("data/raw_data/OECD_gva.csv") %>% 
+  rename(country = "Country Name")
+
+oecd_gva_g7 <- raw_oecd_gva %>% 
+  filter(country %in% c("Canada", "France", "Germany", "Italy", "Japan", "United Kingdom", "United States")  ) %>% 
+  select(-c(2:41)) %>% 
+    pivot_longer(!country, names_to = "year", values_to = "gvd") %>% 
+  drop_na() %>% 
+  # Exchange rate ~$1 = £0.77 and in millions
+  mutate(gvd = gvd*0.77 / 1000000)
+
+
+oecd_gva_g7 %>% 
+  ggplot()+
+  aes(x = year, y = gvd, group = country, colour = country)+
+  geom_line()+
+  labs(title = "GVD in G7 Countries")+
+  xlab("Year")+
+  ylab("GVD (in million £)")+
+  scale_color_manual(values = c("United Kingdom" = "red", "France" = "green"))+
+  theme(axis.text.x = element_text(angle = 45))
+
+
+g7_prod %>% 
+  ggplot()+
+  aes(x = year, y = productivity, group = country, colour = country)+
+  geom_line()+
+  labs(title = "Productivity in G7 Countries")+
+  xlab("Year")+
+  ylab("Output Per Hour Worked (£)")+
+  theme(axis.text.x = element_text(angle = 45))+
+  scale_color_manual(values = c("uk" = "red", "france" = "green"))
+
 ```
 
 
+
+
+# UK productivity Per Industry Divison
+```{r}
+# GVA Per Hour Worked in £
+clean_pro_indu_gvaph <- raw_pro_indu$`GVA CP` %>% 
+  # Remove redundant columns
+  slice(-c(1,2,3,5)) %>% 
+  row_to_names(row_number = 1) %>% 
+  rename(year = "SIC07:") %>% 
+  pivot_longer(!year, names_to = "sic07", values_to = "oph") %>% 
+  mutate(oph = round(as.numeric(oph), digits = 2)) %>% 
+  left_join(sic_identify, by = "sic07") %>% 
+  select(-c("sic07", "description")) %>% 
+  relocate(cat, .before = "oph") %>% 
+  separate(year, c("year", "quarter"), " ") %>% 
+  group_by(year, cat) %>% 
+  summarise(oph = round(mean(oph), digits = 2)) %>% 
+  mutate(show_we = case_when(
+                    cat == "WE" ~ TRUE,
+                    TRUE ~ FALSE))
+  
+clean_pro_indu_gvaph_rate <- clean_pro_indu_gvaph %>% 
+    ungroup() %>% 
+    group_by(cat) %>% 
+  mutate(rate = (oph - lag(oph))/lag(oph))
+  
+
+clean_pro_indu_gvaph %>%
+  filter(cat != "L" & cat != "WE") %>%
+  ggplot()+
+  geom_line(aes(x = year, y  = oph, group = cat, colour = cat))+
+  geom_point(aes(x = year, y  = oph, group = cat, colour = cat))+
+  labs(title = "GVA per industry in UK")+
+  xlab("Year")+
+  ylab("GVA Per Hour Worked (£)")+
+  theme(axis.text.x = element_text(angle = 45))+
+  scale_linetype_manual(values = c("TRUE" = "dashed", "FALSE" = "solid"))+
+  guides(linetype = FALSE)
+
+```
+A	   Agriculture, forestry and fishing
+B-E	 Engineering Industry (except construction)
+F    Construction Industry
+G-I	 Wholesale and retail trade, transport, accommodation and food service activities
+J	   Information and communication
+K	  Financial and insurance activities
+M-N 	Professional, scientific and technical activities; administrative and support service activities
+O-Q	 Public administration, defense, education, human health and social work activities
+R-U	 Arts, entertainment and recreation; other service activities
+
+
+
+```{r}
+
+
+
+```
+
+```{r}
+# # GDP
+# g7_gdp <- raw_world_g7$Table_2 %>% 
+#   na.omit() %>% 
+#   row_to_names(row_number = 1) %>% 
+#   clean_names() %>% 
+#   mutate(across(c(2:8), as.numeric)) %>% 
+#   pivot_longer(!year, names_to = "country", values_to = "gdp")
+# 
+# g7_gdp_avg <- g7_gdp %>% 
+#   filter(country != "uk") %>% 
+#   group_by(year) %>% 
+#   summarise(g7_avg = mean(gdp)) 
+# 
+# 
+# g7_gdp %>% 
+#   ggplot()+
+#   geom_line(aes(x = year, y = gdp, group = country, colour = country))+
+#   labs(title = "GDP comparison between UK and G7 Countries")+
+#   xlab("Year")+
+#   ylab("GDP (in million £)")+
+#   theme(axis.text.x = element_text(angle = 45))+
+#   scale_color_manual(values = c("uk" = "red", "france" = "green"))
+```
 
