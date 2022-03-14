@@ -207,7 +207,7 @@ raw_oecd_gva <- read_csv("data/raw_data/OECD_gva.csv") %>%
 oecd_gva_g7 <- raw_oecd_gva %>% 
   filter(country %in% c("Canada", "France", "Germany", "Italy", "Japan", "United Kingdom", "United States")  ) %>% 
   select(-c(2:41)) %>% 
-    pivot_longer(!country, names_to = "year", values_to = "gva") %>% 
+  pivot_longer(!country, names_to = "year", values_to = "gva") %>% 
   drop_na() %>% 
   # Exchange rate ~$1 = £0.77 and in millions
   mutate(gva = gva*0.77 / 1000000)
@@ -238,13 +238,13 @@ g7_prod %>%
 uk_france_diff_prod <- g7_prod %>% 
   filter(country %in% c("Uk", "France")) %>% 
   pivot_wider(names_from = country, values_from = productivity) %>% 
-  mutate(diff_in_prod = (France / Uk)-1)
+  mutate(diff_in_prod = 100*((France / Uk)-1))
 
 uk_france_diff_gva <- oecd_gva_g7 %>% 
     filter(country %in% c("United Kingdom", "France")) %>% 
   pivot_wider(names_from = country, values_from = gva) %>% 
   rename(Uk = 'United Kingdom') %>% 
-  mutate(diff_in_gva = (France / Uk)-1)
+  mutate(diff_in_gva = 100*((France / Uk)-1))
 
 
 uk_france_diff_prod %>% 
@@ -307,11 +307,12 @@ clean_pro_indu_gvaph %>%
 
 ```
 A	   Agriculture, forestry and fishing
-B-E	 Engineering Industry (except construction)
+B-E	 Engineering Industry
 F    Construction Industry
 G-I	 Wholesale and retail trade, transport, accommodation and food service activities
 J	   Information and communication
 K	  Financial and insurance activities
+L   Real Estate
 M-N 	Professional, scientific and technical activities; administrative and support service activities
 O-Q	 Public administration, defense, education, human health and social work activities
 R-U	 Arts, entertainment and recreation; other service activities
@@ -435,11 +436,154 @@ us_indus_scot_all %>%
 ```
 ```{r}
 uk_indus_scot_indus_cat <- uk_indus_region %>% 
+filter(countries %in% c("uk", "scotland") & sic != "All Industries") %>% 
   mutate(sic = substr(sic,1,1)) %>% 
   left_join(sic_identify_2, by = c("sic" = "sic_cat")) %>% 
-  select(-c("industry", "sic", "region", "is_scot"))
-  filter(countries %in%  c("uk", "scotland"))
+  select(-c("region", "sic", "is_scot")) %>% 
+  group_by(year, countries, cat) %>% 
+  summarise(avg_oph = mean(oph)) %>% 
+  pivot_wider(names_from = countries, values_from = avg_oph) %>% 
+  mutate(diff_in_oph_percent = 100*((scotland / uk)-1))
+  
+
+uk_indus_scot_indus_cat %>%
+  filter(cat != c("L", "O-Q", "R-U")) %>% # CHECK 
+  ggplot()+
+  aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
+  geom_line()+
+  geom_point()+
+  geom_hline(yintercept = 0, linetype = "dashed")+
+  labs(title = "2 Years Moving Average Productivity Growth Rate",
+       subtitle = "Comparsion between Scotland & the UK")+
+  xlab("Year")+
+  ylab("Output Per Hour Worked (£)")+
+  theme(axis.text.x = element_text(angle = 45))
+
+uk_indus_scot_indus_cat %>% 
+    filter(cat != c("L", "O-Q", "R-U")) %>% 
+  ggplot()+
+  aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
+  geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)+
+  geom_hline(yintercept = 0, linetype = "dashed")+
+  labs(title = "Difference in OPH between Scotland and the UK",
+       subtitle = "Fitted with simple linear regression model")+
+  xlab("Year")+
+  ylab("Difference in percentage (%)")+
+  theme(axis.text.x = element_text(angle = 45))+
+  scale_y_continuous(breaks = seq(-40,40,10))
+
+uk_indus_scot_indus_cat %>% 
+  filter(cat %in% c("B-E", "J")) %>% 
+  ggplot()+
+  aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
+  geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)+
+  geom_hline(yintercept = 0, linetype = "dashed")+
+  labs(title = "OPH Difference Summary Per Industry between Scotland and the UK",
+       subtitle = "Fitted with simple linear regression model")+
+  xlab("Year")+
+  ylab("Difference in percentage (%)")+
+  theme(axis.text.x = element_text(angle = 45))+
+  scale_y_continuous(breaks = seq(-40,40,10))
+
+model1 <- lm(diff_in_oph_percent ~ cat, data = uk_indus_scot_indus_cat)
 ```
+In terms of productivity
+
+The best Scottish industry is B-E (Engineering Industry without construction)
+
+The industry with largest margin is A and show signs of 
+
+
+uk_indus_scot_indus_cat$countries
+
+```{r}
+intercept_coef <- (model1[["coefficients"]][1])
+
+uk_indus_coef <- as.data.frame(model1[["coefficients"]]) %>% 
+  rename("coefficient" = c(1)) %>% 
+  rownames_to_column(var = "sic_cat") %>% 
+  mutate(coefficient = coefficient,
+          gradient = round(if_else(coefficient == intercept_coef, intercept_coef, coefficient + intercept_coef), digits = 2))
+uk_indus_coef[1,1] <- "catA"
+
+uk_indus_coef %>% 
+  arrange(desc(gradient))
+```
+
+# UK Industry by World Standard
+```{r}
+raw_world_prod_indus <- multiplesheets(here("data/raw_data/OECD_prod_indus.xlsx"))
+```
+
+```{r}
+word_indus_fun = function(name, df) {
+  df <- as.data.frame(df) %>% 
+        mutate(across(everything(), na_if, "..")) %>% 
+        rename("country" = 'Country') %>% 
+        pivot_longer(!country, names_to = "year", values_to = "rate_percent") %>% 
+        mutate(cat = name)
+  
+  print(df)
+}
+
+world_prod_indus_a   <- word_indus_fun("a", raw_world_prod_indus$a)
+
+
+world_prod_indus_b_e <- word_indus_fun("b_e", raw_world_prod_indus$b_e)
+world_prod_indus_f   <- word_indus_fun("f", raw_world_prod_indus$f)
+world_prod_indus_g_i <- word_indus_fun("g_i", raw_world_prod_indus$g_i)
+world_prod_indus_j   <- word_indus_fun("j", raw_world_prod_indus$j)
+world_prod_indus_k   <- word_indus_fun("k", raw_world_prod_indus$k)
+world_prod_indus_m_n <- word_indus_fun("m_n", raw_world_prod_indus$m_n)
+
+
+# Row Bind everything
+world_prod_indus <- world_prod_indus_a %>% 
+  rbind(world_prod_indus_b_e, world_prod_indus_f, world_prod_indus_g_i, world_prod_indus_j, world_prod_indus_k, world_prod_indus_m_n) %>% 
+  mutate(rate_percent = as.numeric(rate_percent))
+```
+
+```{r}
+ukfrance_prod_indus <- world_prod_indus %>% 
+    filter(country %in% c("United Kingdom", "France")) %>% 
+    pivot_wider(names_from = country, values_from = rate_percent) %>% 
+    clean_names() %>% 
+    mutate(diff_percent = (united_kingdom - france))
+
+
+ukfrance_prod_indus %>% 
+  ggplot()+
+  aes(year, diff_percent, group = cat, colour = cat)+
+  # geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)+
+  labs(title = "OPH Difference Summary Per Industry between UK and France",
+       subtitle = "Fitted with simple linear regression model")+
+  xlab("Year")+
+  ylab("Difference in percentage (%)")+
+  theme(axis.text.x = element_text(angle = 45))
+  ylim(-60,60)
+  
+  model1 <- lm(diff_in_oph_percent ~ cat, data = uk_indus_scot_indus_cat)
+```
+
+#Hypothesis Test
+
+```{r}
+  ggplot()+
+  aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
+  geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)+
+  geom_hline(yintercept = 0, linetype = "dashed")+
+  labs(title = "Difference in OPH between Scotland and the UK",
+       subtitle = "Fitted with simple linear regression model")+
+  xlab("Year")+
+  ylab("Difference in percentage (%)")+
+  theme(axis.text.x = element_text(angle = 45))+
+  scale_y_continuous(breaks = seq(-40,40,10))
+```
+
 
 
 
