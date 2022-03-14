@@ -563,9 +563,92 @@ ukfrance_prod_indus %>%
   xlab("Year")+
   ylab("Difference in percentage (%)")+
   theme(axis.text.x = element_text(angle = 45))
+
+
+
+
+
   ylim(-60,60)
+```
+
+```{r}
+  model2 <- lm(diff_percent ~ cat, data = ukfrance_prod_indus)
+
+intercept_coef2 <- (model2[["coefficients"]][1])
+
+
+
+uk_france_coef <- as.data.frame(model2[["coefficients"]]) %>% 
+  rename("coefficient" = c(1)) %>% 
+  rownames_to_column(var = "sic_cat") %>% 
+  mutate(coefficient = coefficient,
+          gradient = round(if_else(coefficient == intercept_coef, intercept_coef, coefficient + intercept_coef2), digits = 2))
+uk_france_coef[1,1] <- "catA"
+
+uk_france_coef %>% 
+  arrange(desc(gradient))
+```
+
+# G7 Test
+```{r}
+
+uk_prod_indus <- world_prod_indus %>% 
+  filter(country %in% c("United Kingdom")) %>% 
+  select(-country)
   
-  model1 <- lm(diff_in_oph_percent ~ cat, data = uk_indus_scot_indus_cat)
+ukg7_prod_indus <-  world_prod_indus%>% 
+    filter(country %in% c("United Kingdom", "France", "United States", "Italy", "Japan", "Canada", "Germany")) %>% 
+  group_by(year, cat) %>% 
+  summarise(g7_avg_growth = mean(rate_percent, na.rm= TRUE)) %>% 
+  filter(!year %in% c("1995", "1996", "1997")) %>% 
+  mutate(country = "g7") %>% 
+    pivot_wider(names_from = country, values_from = g7_avg_growth) %>% 
+    clean_names() %>% 
+  left_join(uk_prod_indus, key = c("cat", "country", "year")) %>% 
+  rename(united_kingdom = rate_percent) %>% 
+  mutate(diff_percent = (united_kingdom - g7))
+
+ukg7_prod_indus %>% 
+  ggplot()+
+  aes(year, diff_percent, group = cat, colour = cat)+
+  geom_point()+
+  geom_smooth(method = 'lm', se = FALSE)+
+  labs(title = "OPH Difference Summary Per Industry between UK and G7",
+       subtitle = "Fitted with simple linear regression model")+
+  xlab("Year")+
+  ylab("Difference in percentage (%)")+
+  theme(axis.text.x = element_text(angle = 45)) 
+
+ukg7_prod_indus %>% 
+  filter(cat %in% c("j", "g_i")) %>% 
+  ggplot()+
+  aes(year, diff_percent, group = cat, colour = cat)+
+  geom_point()+
+  geom_hline(yintercept = 0, linetype = "dashed")+
+  geom_smooth(method = 'lm', se = FALSE)+
+  labs(title = "OPH Difference Summary Per Industry between UK and G7",
+       subtitle = "Fitted with simple linear regression model")+
+  xlab("Year")+
+  ylab("Difference in percentage (%)")+
+  theme(axis.text.x = element_text(angle = 45)) 
+```
+
+```{r}
+model2 <- lm(diff_percent ~ cat, data = ukg7_prod_indus)
+
+intercept_coef2 <- (model2[["coefficients"]][1])
+
+
+
+ukg7_coef <- as.data.frame(model2[["coefficients"]]) %>% 
+  rename("coefficient" = c(1)) %>% 
+  rownames_to_column(var = "sic_cat") %>% 
+  mutate(coefficient = coefficient,
+          gradient = round(if_else(coefficient == intercept_coef, intercept_coef, coefficient + intercept_coef2), digits = 2))
+ukg7_coef[1,1] <- "catA"
+
+ukg7_coef %>% 
+  arrange(desc(gradient))
 ```
 
 #Hypothesis Test
@@ -584,31 +667,119 @@ ukfrance_prod_indus %>%
   scale_y_continuous(breaks = seq(-40,40,10))
 ```
 
-
-
-
+# Significant Productivity Factor
 ```{r}
-# # GDP
-# g7_gdp <- raw_world_g7$Table_2 %>% 
-#   na.omit() %>% 
-#   row_to_names(row_number = 1) %>% 
-#   clean_names() %>% 
-#   mutate(across(c(2:8), as.numeric)) %>% 
-#   pivot_longer(!year, names_to = "country", values_to = "gdp")
-# 
-# g7_gdp_avg <- g7_gdp %>% 
-#   filter(country != "uk") %>% 
-#   group_by(year) %>% 
-#   summarise(g7_avg = mean(gdp)) 
-# 
-# 
-# g7_gdp %>% 
-#   ggplot()+
-#   geom_line(aes(x = year, y = gdp, group = country, colour = country))+
-#   labs(title = "GDP comparison between UK and G7 Countries")+
-#   xlab("Year")+
-#   ylab("GDP (in million £)")+
-#   theme(axis.text.x = element_text(angle = 45))+
-#   scale_color_manual(values = c("uk" = "red", "france" = "green"))
+raw_fac_prod <- read_csv(here("data/raw_data/OECD_GDPPHWKD_2020.csv")) %>% 
+  clean_names()
+
+# Minimum Wage
+raw_fac_wage_min <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
+
+# Average_wage
+raw_fac_wage_avg <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
+
+# Unemployment_rate
+raw_fac_unemployment_rate <- read_csv(here("data/raw_data/OECD_unemployment_rate_2020.csv"))
+
+# Inflation
+raw_fac_inflation <- read_csv(here("data/raw_data/OECD_inflation_2020.csv"))
+
+# Adult Education Level
+raw_fac_adult_education <- read_csv(here("data/raw_data/OECD_adult_employment_education_level_2020.csv"))
+
+
+raw_country_code <- multiplesheets("data/raw_data/OECD_country_code.xlsx")
+country_code <- raw_country_code$Sheet1 %>% 
+  clean_names() %>% 
+  rename(country = country_name,
+         code = country_code)
 ```
 
+```{r}
+fac_prod <- raw_fac_prod %>% 
+  select(-c("flag_codes", "frequency", "indicator", "measure")) %>% 
+  filter( subject %in% "TOT") %>% 
+  rename(year = time,
+         prod_usd = value,
+         code = location) %>% 
+  mutate(year = as.character(year))
+
+fac_wage_min <- raw_fac_wage_min$`OECD.Stat export`  %>% 
+  row_to_names(row_number = 1, remove_row = TRUE) %>% 
+  rename(country = Country) %>% 
+  right_join(country_code, by = "country" ) %>%
+  mutate(across(everything(), na_if, "..")) %>% 
+  pivot_longer(!c("country", "code"), names_to = "year", values_to = "min_wage") %>% 
+  mutate(min_wage = round(as.numeric(min_wage), digits = 2)) %>% 
+  drop_na()
+
+fac_wage_avg <- raw_fac_wage_avg$`OECD.Stat export`%>% 
+  row_to_names(row_number = 1, remove_row = TRUE) %>% 
+  rename(country = Country) %>% 
+  right_join(country_code, by = "country" ) %>%
+  mutate(across(everything(), na_if, "..")) %>% 
+  pivot_longer(!c("country", "code"), names_to = "year", values_to = "avg_wage") %>% 
+  mutate(avg_wage = round(as.numeric(avg_wage), digits = 2)) %>% 
+  drop_na()
+
+fac_unemployment_rate <- raw_fac_unemployment_rate %>% 
+  clean_names() %>% 
+  filter( subject %in% "TOT") %>% 
+  select(-c("flag_codes", "frequency", "indicator", "measure", "subject")) %>% 
+  rename(year = time)
+  
+fac_inflation <- raw_fac_inflation %>%
+  clean_names() %>% 
+  filter( measure %in% "AGRWTH" & subject %in% "TOT") %>% 
+  select(-c("flag_codes", "frequency", "indicator", "measure", "subject")) %>% 
+  rename(year = time)
+
+# Filter with Tertiary (Uni /degree)
+fac_adult_education <- raw_fac_adult_education %>% 
+  clean_names() %>% 
+  filter( subject %in% "TRY") %>% 
+  rename(code = location,
+         year = time) %>% 
+    select(-c("flag_codes", "frequency", "indicator", "measure", "subject")) %>% 
+  mutate(year = as.character(year))
+```
+
+# Productivity vs Minimum Wage
+# Will higher minimum wage have significant impact on productivity
+# Paired 2 tails
+```{r}
+test_prod_min_wage <- fac_prod %>% 
+  inner_join(fac_wage_min, key = c("code", "year"))
+```
+
+# Productivity vs Average Wage
+# Will higher average wage have significant impact on productivity
+# Paired 2 tails
+```{r}
+test_prod_avg_wage <- fac_prod %>% 
+  inner_join(fac_wage_avg, key = c("code", "year"))
+```
+# Productivity vs Unemployment Rate
+# Paired 1 tail positive
+```{r}
+test_prod_unemployment <- fac_prod %>% 
+  inner_join(fac_unemployment_rate, key = c("code", "year"))
+  
+```
+# Productivity vs Inflation
+# Does inflation have a negative impact on worker productivity
+# Paired 1 tail negative
+```{r}
+test_prod_inflation <- fac_prod %>% 
+  inner_join(fac_inflation, key = c("code", "year"))
+  
+```
+
+# Productivity vs Tertiary Employment Rate
+# Does higher tertiary employment rate have a positive impact on worker productivity
+# Paired 1 tail positive
+```{r}
+test_prod_inflation <- fac_prod %>% 
+  inner_join(fac_adult_education, key = c("code", "year"))
+  
+```
