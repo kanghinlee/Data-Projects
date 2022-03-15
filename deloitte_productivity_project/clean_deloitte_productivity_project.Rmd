@@ -8,6 +8,9 @@ library(tidyverse)
 library(janitor)
 library(readxl)
 library(here)
+library(fable)
+library(tsibble)
+library(tsibbledata)
 library(lubridate)
 library(slider)
 library(infer)
@@ -69,6 +72,47 @@ raw_world_euro <- multiplesheets(here("data/raw_data/International Labour Produc
 raw_world_g7 <- multiplesheets(here("data/raw_data/international_labour_productivity_G7_2020.xlsx"))
 
 raw_world_multi <- multiplesheets(here("data/raw_data/OECD_multifactor_productivity.xls"))
+
+
+raw_uk_indus_region <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Region by Industry_2019.xls"))
+
+
+raw_oecd_gva <- read_csv("data/raw_data/OECD_gva.csv") %>% 
+  rename(country = "Country Name")
+
+
+raw_world_prod_indus <- multiplesheets(here("data/raw_data/OECD_prod_indus.xlsx"))
+
+
+raw_fac_prod <- read_csv(here("data/raw_data/OECD_GDPPHWKD_2020.csv")) %>% 
+  clean_names()
+
+# Minimum Wage
+raw_fac_wage_min <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
+
+# Average_wage
+raw_fac_wage_avg <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
+
+# Unemployment_rate
+raw_fac_unemployment_rate <- read_csv(here("data/raw_data/OECD_unemployment_rate_2020.csv"))
+
+# Inflation
+raw_fac_inflation <- read_csv(here("data/raw_data/OECD_inflation_2020.csv"))
+
+# Adult Education Level
+raw_fac_adult_education <- read_csv(here("data/raw_data/OECD_adult_education_2020.csv"))
+
+
+raw_country_code <- multiplesheets("data/raw_data/OECD_country_code.xlsx")
+country_code <- raw_country_code$Sheet1 %>% 
+  clean_names() %>% 
+  rename(country = country_name,
+         code = country_code)
+
+raw_oecd_min_wage <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
+
+
+raw_employee_hour_worked <- read_csv((here("data/raw_data/OECD_employees_hour_worked.csv")))
 ```
 
 
@@ -128,16 +172,39 @@ g7_prod_avg <- g7_prod %>%
 g7_prod %>% 
   filter(country == "Uk") %>% 
   ggplot()+
-  aes(x = year, y = productivity, group = country, colour = "brown2")+
+  aes(x = year, y = productivity, group = country, colour = country)+
   geom_point()+
   geom_line()+
-  geom_line(aes(x = g7_prod_avg$year, y = g7_prod_avg$productivity, group = country), linetype = 2, colour = "black")+
+  geom_line(aes(x = g7_prod_avg$year, y = g7_prod_avg$productivity, group = "G7"), linetype = 2, colour = "black")+
+  geom_point(aes(x = g7_prod_avg$year, y = g7_prod_avg$productivity, group = "G7"), linetype = 2, colour = "black")+
+    geom_vline(aes(xintercept = "2008"), linetype = "longdash", alpha = 0.5)+
+  geom_vline(aes(xintercept = "2018"), linetype = "longdash", alpha = 0.5)+
+    annotate(geom = "text",
+             label = c("Recession"),
+             x = c("2005"),
+             y = c(47.5),
+             vjust = 1,
+           hjust = -.05) +
+    annotate(geom = "text",
+             label = c("Pandemic"),
+             x = c("2015"),
+             y = c(47.5),
+             vjust = 1,
+           hjust = -.05) +  
   labs(title = "Productivity in G7 Countries")+
   xlab("Year")+
   ylab("Output Per Hour Worked (£)")+
   theme(axis.text.x = element_text(angle = 45))+
+  scale_colour_manual(values = c("Uk" = "brown2", "G7" = "black"))+
+  scale_linetype_manual(values = c("Uk" = "solid", "G7" = "dashed"))+
   theme(legend.position="bottom")
+
+
+
 ```
+
+
+
 
 # G7 - Output Per Hour wored growth
 ```{r}
@@ -175,7 +242,8 @@ g7_prod_growth %>%
   aes(x = year, y = moving_avg, group = country, colour = country)+
   geom_point()+
   geom_line()+
-  geom_line(aes(x = g7_avg_prod_growth$year, y = g7_avg_prod_growth$moving_avg, group = country, colour = country), linetype = 2, colour = "black", size = 1)+
+  geom_line(aes(x = g7_avg_prod_growth$year, y = g7_avg_prod_growth$moving_avg, group = country, colour = "G7"), linetype = 2, size = 1)+
+  geom_point(aes(x = g7_avg_prod_growth$year, y = g7_avg_prod_growth$moving_avg, group = country, colour = "G7"), linetype = 2)+
   geom_vline(aes(xintercept = "2008"), linetype = "longdash", alpha = 0.5)+
   geom_vline(aes(xintercept = "2018"), linetype = "longdash", alpha = 0.5)+
     annotate(geom = "text",
@@ -191,18 +259,18 @@ g7_prod_growth %>%
              vjust = 1,
            hjust = -.05) +  
   
-  labs(title = "2 Years Moving Average Grow Rate",
-       subtitle = "Comparison between UK and Other G7 Countries")+
+  labs(title = "Grow Rate between UK and G7")+
   xlab("Year")+
-  ylab("Growth Rate Per year (%)")+
+  ylab("Growth Rate")+
   theme(axis.text.x = element_text(angle = 45))+
+  scale_colour_manual(values = c("uk" = "brown2", "G7" = "black"))+
+  scale_linetype_manual(values = c("uk" = "solid", "G7" = "dashed"))+
   theme(legend.position="bottom")
 
 ```
 # G7 - GVD
 ```{r}
-raw_oecd_gva <- read_csv("data/raw_data/OECD_gva.csv") %>% 
-  rename(country = "Country Name")
+
 
 oecd_gva_g7 <- raw_oecd_gva %>% 
   filter(country %in% c("Canada", "France", "Germany", "Italy", "Japan", "United Kingdom", "United States")  ) %>% 
@@ -320,8 +388,6 @@ R-U	 Arts, entertainment and recreation; other service activities
 
 # Minimum and Average Wage
 ```{r}
-raw_oecd_min_wage <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
-
 oecd_min_wage <- raw_oecd_min_wage$`OECD.Stat export` %>% 
   row_to_names(row_number = 1) %>% 
   filter(Country %in% c("France", "United Kingdom")) %>% 
@@ -349,9 +415,7 @@ oecd_wage <- oecd_min_wage %>%
 # UK Indsutry by Region
 
 
-```{r}
-raw_uk_indus_region <- multiplesheets(here("data/raw_data/uk_Labour Productivity - Region by Industry_2019.xls"))
-```
+
 
 ```{r}
 
@@ -416,21 +480,20 @@ us_indus_scot_all %>%
     annotate(geom = "text",
              label = c("Recession"),
              x = c("2005"),
-             y = c(0.06),
+             y = c(0.07),
              vjust = 1,
            hjust = -.05) +
     annotate(geom = "text",
              label = c("Pandemic"),
              x = c("2015"),
-             y = c(0.06),
+             y = c(0.07),
              vjust = 1,
            hjust = -.05) +  
-  labs(title = "2 Years Moving Average Productivity Growth Rate",
-       subtitle = "Comparsion between Scotland & the UK")+
+  labs(title = "Productivity Growth Rate comparsion between Scotland & the UK")+
   xlab("Year")+
-  ylab("Output Per Hour Worked (£)")+
+  ylab("Growth Rate")+
   theme(axis.text.x = element_text(angle = 45))+
-  scale_colour_manual(values = c("scotland" = "steelblue", "uk" = "black"))+
+  scale_colour_manual(values = c("scotland" = "steelblue", "uk" = "brown2"))+
   scale_linetype_manual(values = c("scotland" = "solid", "uk" = "dashed"))+
   theme(legend.position="bottom")
 ```
@@ -444,7 +507,7 @@ filter(countries %in% c("uk", "scotland") & sic != "All Industries") %>%
   summarise(avg_oph = mean(oph)) %>% 
   pivot_wider(names_from = countries, values_from = avg_oph) %>% 
   mutate(diff_in_oph_percent = 100*((scotland / uk)-1))
-  
+
 
 uk_indus_scot_indus_cat %>%
   filter(cat != c("L", "O-Q", "R-U")) %>% # CHECK 
@@ -453,7 +516,7 @@ uk_indus_scot_indus_cat %>%
   geom_line()+
   geom_point()+
   geom_hline(yintercept = 0, linetype = "dashed")+
-  labs(title = "2 Years Moving Average Productivity Growth Rate",
+  labs(title = "Difference in Productivity Growth Rate",
        subtitle = "Comparsion between Scotland & the UK")+
   xlab("Year")+
   ylab("Output Per Hour Worked (£)")+
@@ -466,28 +529,29 @@ uk_indus_scot_indus_cat %>%
   geom_point()+
   geom_smooth(method = 'lm', se = FALSE)+
   geom_hline(yintercept = 0, linetype = "dashed")+
-  labs(title = "Difference in OPH between Scotland and the UK",
+  labs(title = "Difference in Productivity Growth Rate between Scotland and the UK",
        subtitle = "Fitted with simple linear regression model")+
   xlab("Year")+
-  ylab("Difference in percentage (%)")+
+  ylab("Grow Rate Difference")+
   theme(axis.text.x = element_text(angle = 45))+
   scale_y_continuous(breaks = seq(-40,40,10))
 
 uk_indus_scot_indus_cat %>% 
-  filter(cat %in% c("B-E", "J")) %>% 
+  filter(cat %in% c("B-E", "J", "A")) %>% 
   ggplot()+
   aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
   geom_point()+
   geom_smooth(method = 'lm', se = FALSE)+
   geom_hline(yintercept = 0, linetype = "dashed")+
-  labs(title = "OPH Difference Summary Per Industry between Scotland and the UK",
+  labs(title = "Difference in Productivity Growth Rate Summary between Scotland and the UK",
        subtitle = "Fitted with simple linear regression model")+
   xlab("Year")+
-  ylab("Difference in percentage (%)")+
+  ylab("Growth Rate Difference")+
   theme(axis.text.x = element_text(angle = 45))+
   scale_y_continuous(breaks = seq(-40,40,10))
 
-model1 <- lm(diff_in_oph_percent ~ cat, data = uk_indus_scot_indus_cat)
+
+
 ```
 In terms of productivity
 
@@ -499,6 +563,8 @@ The industry with largest margin is A and show signs of
 uk_indus_scot_indus_cat$countries
 
 ```{r}
+
+model1 <- lm(diff_in_oph_percent ~ cat, data = uk_indus_scot_indus_cat)
 intercept_coef <- (model1[["coefficients"]][1])
 
 uk_indus_coef <- as.data.frame(model1[["coefficients"]]) %>% 
@@ -508,14 +574,16 @@ uk_indus_coef <- as.data.frame(model1[["coefficients"]]) %>%
           gradient = round(if_else(coefficient == intercept_coef, intercept_coef, coefficient + intercept_coef), digits = 2))
 uk_indus_coef[1,1] <- "catA"
 
+
+summary(model1)
 uk_indus_coef %>% 
   arrange(desc(gradient))
 ```
 
+
+
 # UK Industry by World Standard
-```{r}
-raw_world_prod_indus <- multiplesheets(here("data/raw_data/OECD_prod_indus.xlsx"))
-```
+
 
 ```{r}
 word_indus_fun = function(name, df) {
@@ -546,29 +614,29 @@ world_prod_indus <- world_prod_indus_a %>%
 ```
 
 ```{r}
-ukfrance_prod_indus <- world_prod_indus %>% 
-    filter(country %in% c("United Kingdom", "France")) %>% 
-    pivot_wider(names_from = country, values_from = rate_percent) %>% 
-    clean_names() %>% 
-    mutate(diff_percent = (united_kingdom - france))
-
-
-ukfrance_prod_indus %>% 
-  ggplot()+
-  aes(year, diff_percent, group = cat, colour = cat)+
-  # geom_point()+
-  geom_smooth(method = 'lm', se = FALSE)+
-  labs(title = "OPH Difference Summary Per Industry between UK and France",
-       subtitle = "Fitted with simple linear regression model")+
-  xlab("Year")+
-  ylab("Difference in percentage (%)")+
-  theme(axis.text.x = element_text(angle = 45))
-
-
-
-
-
-  ylim(-60,60)
+# ukfrance_prod_indus <- world_prod_indus %>% 
+#     filter(country %in% c("United Kingdom", "France")) %>% 
+#     pivot_wider(names_from = country, values_from = rate_percent) %>% 
+#     clean_names() %>% 
+#     mutate(diff_percent = (united_kingdom - france))
+# 
+# 
+# ukfrance_prod_indus %>% 
+#   ggplot()+
+#   aes(year, diff_percent, group = cat, colour = cat)+
+#   # geom_point()+
+#   geom_smooth(method = 'lm', se = FALSE)+
+#   labs(title = "OPH Difference Summary Per Industry between UK and France",
+#        subtitle = "Fitted with simple linear regression model")+
+#   xlab("Year")+
+#   ylab("Difference in percentage (%)")+
+#   theme(axis.text.x = element_text(angle = 45))
+# 
+# 
+# 
+# 
+# 
+#   ylim(-60,60)
 ```
 
 ```{r}
@@ -613,7 +681,8 @@ ukg7_prod_indus %>%
   aes(year, diff_percent, group = cat, colour = cat)+
   geom_point()+
   geom_smooth(method = 'lm', se = FALSE)+
-  labs(title = "OPH Difference Summary Per Industry between UK and G7",
+  geom_hline(yintercept = 0, linetype = "dashed")+
+  labs(title = "Difference in Productivity Growth Rate Per Industry between UK and G7",
        subtitle = "Fitted with simple linear regression model")+
   xlab("Year")+
   ylab("Difference in percentage (%)")+
@@ -626,7 +695,7 @@ ukg7_prod_indus %>%
   geom_point()+
   geom_hline(yintercept = 0, linetype = "dashed")+
   geom_smooth(method = 'lm', se = FALSE)+
-  labs(title = "OPH Difference Summary Per Industry between UK and G7",
+  labs(title = "Difference in Productivity Growth Rate Summary Per Industry between UK and G7",
        subtitle = "Fitted with simple linear regression model")+
   xlab("Year")+
   ylab("Difference in percentage (%)")+
@@ -656,30 +725,7 @@ ukg7_coef %>%
 
 # Significant Productivity Factor
 ```{r}
-raw_fac_prod <- read_csv(here("data/raw_data/OECD_GDPPHWKD_2020.csv")) %>% 
-  clean_names()
 
-# Minimum Wage
-raw_fac_wage_min <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
-
-# Average_wage
-raw_fac_wage_avg <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_2020.xlsx"))
-
-# Unemployment_rate
-raw_fac_unemployment_rate <- read_csv(here("data/raw_data/OECD_unemployment_rate_2020.csv"))
-
-# Inflation
-raw_fac_inflation <- read_csv(here("data/raw_data/OECD_inflation_2020.csv"))
-
-# Adult Education Level
-raw_fac_adult_education <- read_csv(here("data/raw_data/OECD_adult_employment_education_level_2020.csv"))
-
-
-raw_country_code <- multiplesheets("data/raw_data/OECD_country_code.xlsx")
-country_code <- raw_country_code$Sheet1 %>% 
-  clean_names() %>% 
-  rename(country = country_name,
-         code = country_code)
 ```
 
 ```{r}
@@ -717,22 +763,43 @@ fac_unemployment_rate <- raw_fac_unemployment_rate %>%
   clean_names() %>% 
   filter( subject %in% "TOT") %>% 
   select(-c("flag_codes", "frequency", "indicator", "measure", "subject")) %>% 
-  rename(year = time)
+  rename(year = time,
+         code = location)
   
 fac_inflation <- raw_fac_inflation %>%
   clean_names() %>% 
   filter( measure %in% "AGRWTH" & subject %in% "TOT") %>% 
   select(-c("flag_codes", "frequency", "indicator", "measure", "subject")) %>% 
-  rename(year = time)
+  rename(year = time,
+         code = location)
 
 # Filter with Tertiary (Uni /degree)
 fac_adult_education <- raw_fac_adult_education %>% 
   clean_names() %>% 
-  filter( subject %in% "TRY") %>% 
   rename(code = location,
          year = time) %>% 
-    select(-c("flag_codes", "frequency", "indicator", "measure", "subject")) %>% 
   mutate(year = as.character(year))
+
+
+fac_adult_education_try <- fac_adult_education %>% 
+  filter( subject %in% "TRY") %>% 
+  select(-subject)
+
+# Below Upper Secondary
+fac_adult_education_buppsry <- fac_adult_education %>% 
+  filter( subject %in% "BUPPSRY") %>% 
+  select(-subject)
+
+fac_adult_education_uppsry <- fac_adult_education %>% 
+  filter( subject %in% "UPPSRY") %>% 
+  select(-subject)
+
+fac_hrwkd <- raw_employee_hour_worked %>% 
+  clean_names() %>% 
+  rename(code = location,
+         year = time) %>% 
+  mutate(year = as.character(year)) %>% 
+  select(-c("flag_codes", "frequency", "indicator", "measure", "subject"))
 ```
 
 # Productivity vs Minimum Wage
@@ -832,9 +899,6 @@ p_value <- null_distribution %>%
 p_value
 ```
 
-
-
-
 # Countries with higher average salary
 
 ```{r}
@@ -849,17 +913,264 @@ test_prod_avg_wage_uk <- test_prod_avg_wage %>%
    filter(!code %in% "GBR") %>% 
   left_join(test_uk_stat, key = c("year")) %>% 
   mutate(is_higher_wage = if_else(avg_wage - uk_avg_wage >= 0, "TRUE", "FALSE"),
-         is_higher_prod = prod_usd - uk_prod)
+         diff_prod = prod_usd - uk_prod)
 
 
 null_distribution <- test_prod_avg_wage_uk %>% 
-  specify(is_higher_prod ~ is_higher_wage) %>% 
+  specify(diff_prod ~ is_higher_wage) %>% 
   hypothesize(null = "independence") %>%
   generate(reps = 10000, type = "permute") %>% 
   calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
 
 observed_stat <- test_prod_avg_wage_uk %>% 
-  specify(is_higher_prod ~ is_higher_wage) %>%
+  specify(diff_prod ~ is_higher_wage) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value
+```
+# Higher hours worked
+
+```{r}
+test_fac_hrwkd <- fac_prod %>% 
+  inner_join(fac_hrwkd, key = c("code", "year"))
+
+test_fac_hrwkd_uk <- test_fac_hrwkd %>% 
+  filter(code %in% "GBR") %>% 
+  rename(prod_uk = prod_usd,
+         value_uk = value) %>% 
+  select(year, prod_uk, value_uk)
+  
+test_fac_hrwkd <- test_fac_hrwkd %>% 
+   filter(!code %in% "GBR") %>% 
+  left_join(test_fac_hrwkd_uk, key = c("year")) %>% 
+  mutate(is_higher_hrwkd = if_else(value - value_uk >= 0, "TRUE", "FALSE"),
+         diff_prod = prod_usd - prod_uk)
+
+null_distribution <- test_fac_hrwkd %>% 
+  specify(diff_prod ~ is_higher_hrwkd) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 10000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_fac_hrwkd %>% 
+  specify(diff_prod ~ is_higher_hrwkd) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "left")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "left")
+
+p_value  
+
+```
+
+
+
+
+
+# Productivity vs Unemployment Rate
+# Paired 1 tail positive
+```{r}
+test_prod_unemployment <- fac_prod %>% 
+  inner_join(fac_unemployment_rate, key = c("code", "year"))
+
+test_prod_unemployment_uk <- test_prod_unemployment  %>% 
+  filter(code %in% "GBR") %>% 
+  rename(prod_uk = prod_usd,
+         value_uk = value) %>% 
+  select(year, prod_uk, value_uk)
+
+test_prod_unemployment <- test_prod_unemployment %>% 
+  filter(!code %in% "GBR") %>% 
+  left_join(test_prod_unemployment_uk, key =c("year")) %>% 
+  drop_na() %>% 
+  mutate( diff_prod = prod_usd - prod_uk,
+         is_higher_umeploy = if_else((value - value_uk) >= 0, "TRUE", "FALSE"))
+
+test_prod_unemployment %>% 
+  ggplot()+
+  aes(is_higher_umeploy, diff_prod)+
+  geom_boxplot()
+
+
+null_distribution <- test_prod_unemployment %>% 
+  specify(diff_prod ~ is_higher_umeploy) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 10000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_prod_unemployment %>% 
+  specify(diff_prod ~ is_higher_umeploy) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "left")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "left")
+
+p_value
+  
+```
+
+# Productivity vs Inflation
+# Does inflation have a negative impact on worker productivity
+# Paired 1 tail negative
+```{r}
+test_prod_inflation <- fac_prod %>% 
+  inner_join(fac_inflation, key = c("code", "year"))
+
+test_prod_inflation_uk <- test_prod_inflation %>% 
+  filter(code %in% "GBR") %>% 
+  rename(prod_uk = prod_usd,
+         value_uk = value) %>% 
+  select(year, prod_uk, value_uk)
+  
+test_prod_inflation <- test_prod_inflation %>% 
+  filter(!code %in% "GBR") %>% 
+  left_join(test_prod_unemployment_uk, key =c("year")) %>% 
+  drop_na() %>% 
+  mutate( diff_prod = prod_usd - prod_uk,
+         is_higher_inflation = if_else((value - value_uk) >= 0, "TRUE", "FALSE"))
+
+
+null_distribution <- test_prod_inflation %>% 
+  specify(diff_prod ~ is_higher_inflation) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 5000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_prod_inflation %>% 
+  specify(diff_prod ~ is_higher_inflation) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "left")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "left")
+
+p_value
+
+  
+```
+
+# Productivity vs Tertiary Employment Rate
+# Does higher tertiary employment rate have a positive impact on worker productivity
+# Paired 1 tail positive
+```{r}
+test_prod_adult_education_try <- fac_prod %>% 
+  inner_join(fac_adult_education_try, key = c("code", "year"))
+
+test_prod_adult_education_try_uk <- test_prod_adult_education_try %>% 
+  filter(code %in% "GBR") %>% 
+  rename(prod_uk = prod_usd,
+         value_uk = value) %>% 
+  select(year, prod_uk, value_uk) 
+
+
+test_prod_adult_education_try <-test_prod_adult_education_try %>% 
+  filter(!code %in% "GBR") %>% 
+  left_join(test_prod_adult_education_try_uk, key =c("year")) %>% 
+  drop_na() %>% 
+  mutate( diff_prod = prod_usd - prod_uk,
+         is_higher_try_education_percent = if_else((value - value_uk) >= 0, "TRUE", "FALSE")) 
+
+null_distribution <- test_prod_adult_education_try %>% 
+  specify(diff_prod ~ is_higher_try_education_percent) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 5000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_prod_adult_education_try %>% 
+  specify(diff_prod ~ is_higher_try_education_percent) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value
+  
+```
+
+```{r}
+test_prod_adult_education_buppsry <- fac_prod %>% 
+  inner_join(fac_adult_education_buppsry, key = c("code", "year"))
+
+test_prod_adult_education_buppsry_uk <- test_prod_adult_education_buppsry %>% 
+  filter(code %in% "GBR") %>% 
+  rename(prod_uk = prod_usd,
+         value_uk = value) %>% 
+  select(year, prod_uk, value_uk) 
+
+test_prod_adult_education_buppsry <- test_prod_adult_education_buppsry %>% 
+  filter(!code %in% "GBR") %>% 
+  left_join(test_prod_adult_education_buppsry_uk, key =c("year")) %>% 
+  drop_na() %>% 
+  mutate( diff_prod = prod_usd - prod_uk,
+         is_higher_buppsry_education_percent = if_else((value - value_uk) >= 0, "TRUE", "FALSE")) 
+
+null_distribution <- test_prod_adult_education_buppsry %>% 
+  specify(diff_prod ~ is_higher_buppsry_education_percent) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 5000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_prod_adult_education_buppsry %>% 
+  specify(diff_prod ~ is_higher_buppsry_education_percent) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value
+```
+
+```{r}
+test_prod_adult_education_uppsry <- fac_prod %>% 
+  inner_join(fac_adult_education_uppsry, key = c("code", "year"))
+
+test_prod_adult_education_uppsry_uk <- test_prod_adult_education_uppsry %>% 
+  filter(code %in% "GBR") %>% 
+  rename(prod_uk = prod_usd,
+         value_uk = value) %>% 
+  select(year, prod_uk, value_uk) 
+
+test_prod_adult_education_uppsry <-test_prod_adult_education_uppsry %>% 
+  filter(!code %in% "GBR") %>% 
+  left_join(test_prod_adult_education_uppsry_uk, key =c("year")) %>% 
+  drop_na() %>% 
+  mutate( diff_prod = prod_usd - prod_uk,
+         is_higher_uppsry_education_percent = if_else((value - value_uk) >= 0, "TRUE", "FALSE")) 
+
+null_distribution <- test_prod_adult_education_uppsry %>% 
+  specify(diff_prod ~ is_higher_uppsry_education_percent) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 5000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_prod_adult_education_uppsry %>% 
+  specify(diff_prod ~ is_higher_uppsry_education_percent) %>%
   calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
 
 null_distribution %>%
@@ -873,34 +1184,8 @@ p_value
 ```
 
 
-
-
-
-
-
-
-# Productivity vs Unemployment Rate
-# Paired 1 tail positive
 ```{r}
-test_prod_unemployment <- fac_prod %>% 
-  inner_join(fac_unemployment_rate, key = c("code", "year")) %>% 
-  drop_na()
-  
-```
-# Productivity vs Inflation
-# Does inflation have a negative impact on worker productivity
-# Paired 1 tail negative
-```{r}
-test_prod_inflation <- fac_prod %>% 
-  inner_join(fac_inflation, key = c("code", "year"))
-  
+fac_adult_education_uppsry
 ```
 
-# Productivity vs Tertiary Employment Rate
-# Does higher tertiary employment rate have a positive impact on worker productivity
-# Paired 1 tail positive
-```{r}
-test_prod_inflation <- fac_prod %>% 
-  inner_join(fac_adult_education, key = c("code", "year"))
-  
-```
+
