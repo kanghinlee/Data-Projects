@@ -653,19 +653,6 @@ ukg7_coef %>%
 
 #Hypothesis Test
 
-```{r}
-  ggplot()+
-  aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
-  geom_point()+
-  geom_smooth(method = 'lm', se = FALSE)+
-  geom_hline(yintercept = 0, linetype = "dashed")+
-  labs(title = "Difference in OPH between Scotland and the UK",
-       subtitle = "Fitted with simple linear regression model")+
-  xlab("Year")+
-  ylab("Difference in percentage (%)")+
-  theme(axis.text.x = element_text(angle = 45))+
-  scale_y_continuous(breaks = seq(-40,40,10))
-```
 
 # Significant Productivity Factor
 ```{r}
@@ -702,7 +689,9 @@ fac_prod <- raw_fac_prod %>%
   rename(year = time,
          prod_usd = value,
          code = location) %>% 
-  mutate(year = as.character(year))
+  mutate(year = as.character(year),
+         prod_usd = round(prod_usd, digits = 2),
+        prod_rate = (prod_usd - lag(prod_usd))/lag(prod_usd))
 
 fac_wage_min <- raw_fac_wage_min$`OECD.Stat export`  %>% 
   row_to_names(row_number = 1, remove_row = TRUE) %>% 
@@ -710,7 +699,8 @@ fac_wage_min <- raw_fac_wage_min$`OECD.Stat export`  %>%
   right_join(country_code, by = "country" ) %>%
   mutate(across(everything(), na_if, "..")) %>% 
   pivot_longer(!c("country", "code"), names_to = "year", values_to = "min_wage") %>% 
-  mutate(min_wage = round(as.numeric(min_wage), digits = 2)) %>% 
+  mutate(min_wage = round(as.numeric(min_wage), digits = 2),
+         min_wage_rate = (min_wage - lag(min_wage))/lag(min_wage)) %>% 
   drop_na()
 
 fac_wage_avg <- raw_fac_wage_avg$`OECD.Stat export`%>% 
@@ -719,7 +709,8 @@ fac_wage_avg <- raw_fac_wage_avg$`OECD.Stat export`%>%
   right_join(country_code, by = "country" ) %>%
   mutate(across(everything(), na_if, "..")) %>% 
   pivot_longer(!c("country", "code"), names_to = "year", values_to = "avg_wage") %>% 
-  mutate(avg_wage = round(as.numeric(avg_wage), digits = 2)) %>% 
+  mutate(avg_wage = round(as.numeric(avg_wage), digits = 2),
+         avg_wage_rate = (avg_wage - lag(avg_wage))/lag(avg_wage)) %>% 
   drop_na()
 
 fac_unemployment_rate <- raw_fac_unemployment_rate %>% 
@@ -745,11 +736,38 @@ fac_adult_education <- raw_fac_adult_education %>%
 ```
 
 # Productivity vs Minimum Wage
-# Will higher minimum wage have significant impact on productivity
-# Paired 2 tails
+# At any given point of year and country, 
+# does having a positive minimum wage change have a positive significant impact on productivity
+# independent 1 tail test
 ```{r}
 test_prod_min_wage <- fac_prod %>% 
-  inner_join(fac_wage_min, key = c("code", "year"))
+  inner_join(fac_wage_min, key = c("code", "year")) %>% 
+  mutate(is_pos_wage = if_else(min_wage_rate >= 0, TRUE, FALSE),
+         is_pos_wage = as.character(is_pos_wage))
+
+test_prod_min_wage %>% 
+  ggplot()+
+  aes(x = is_pos_wage, y = prod_rate)+
+  geom_boxplot()
+
+null_distribution <- test_prod_min_wage %>% 
+  specify(prod_rate ~ is_pos_wage) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 10000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_prod_min_wage %>% 
+  specify(prod_rate ~ is_pos_wage) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value
 ```
 
 # Productivity vs Average Wage
@@ -757,13 +775,116 @@ test_prod_min_wage <- fac_prod %>%
 # Paired 2 tails
 ```{r}
 test_prod_avg_wage <- fac_prod %>% 
-  inner_join(fac_wage_avg, key = c("code", "year"))
+  inner_join(fac_wage_avg, key = c("code", "year")) %>% 
+      mutate(is_pos_wage_rate = if_else(avg_wage_rate >= 0, TRUE, FALSE),
+             is_pos_wage_rate = as.character(is_pos_wage_rate))
+
+null_distribution <- test_prod_avg_wage %>% 
+  specify(prod_rate ~ is_pos_wage_rate) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 10000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_prod_avg_wage %>% 
+  specify(prod_rate ~ is_pos_wage_rate) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value
+
 ```
+```{r}
+test_higher_min_wage_uk <- test_prod_min_wage %>% 
+  filter(code %in% "GBR") %>% 
+  rename(uk_min_wage = min_wage,
+         uk_prod = prod_usd) %>% 
+  select(year, uk_min_wage,uk_prod )
+
+test_higher_min_wage <- test_prod_min_wage %>% 
+  filter(!code %in% "GBR") %>% 
+  left_join(test_higher_min_wage_uk, key = c("year")) %>% 
+  mutate(is_higher_wage = if_else(min_wage - uk_min_wage >= 0, "TRUE", "FALSE"),
+         diff_wage  = prod_usd - uk_prod)
+
+null_distribution <- test_higher_min_wage %>% 
+  specify(diff_wage ~ is_higher_wage) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 10000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_higher_min_wage %>% 
+  specify(diff_wage ~ is_higher_wage) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value
+```
+
+
+
+
+# Countries with higher average salary
+
+```{r}
+
+test_uk_stat <- test_prod_avg_wage %>% 
+  filter(code %in% "GBR") %>% 
+  rename(uk_avg_wage = avg_wage,
+         uk_prod = prod_usd) %>% 
+  select(year, uk_avg_wage, uk_prod)
+
+test_prod_avg_wage_uk <- test_prod_avg_wage %>% 
+   filter(!code %in% "GBR") %>% 
+  left_join(test_uk_stat, key = c("year")) %>% 
+  mutate(is_higher_wage = if_else(avg_wage - uk_avg_wage >= 0, "TRUE", "FALSE"),
+         is_higher_prod = prod_usd - uk_prod)
+
+
+null_distribution <- test_prod_avg_wage_uk %>% 
+  specify(is_higher_prod ~ is_higher_wage) %>% 
+  hypothesize(null = "independence") %>%
+  generate(reps = 10000, type = "permute") %>% 
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+observed_stat <- test_prod_avg_wage_uk %>% 
+  specify(is_higher_prod ~ is_higher_wage) %>%
+  calculate(stat = "diff in means", order = c("TRUE", "FALSE"))
+
+null_distribution %>%
+  visualise() +
+  shade_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value <- null_distribution %>%
+  get_p_value(obs_stat = observed_stat, direction = "right")
+
+p_value
+```
+
+
+
+
+
+
+
+
 # Productivity vs Unemployment Rate
 # Paired 1 tail positive
 ```{r}
 test_prod_unemployment <- fac_prod %>% 
-  inner_join(fac_unemployment_rate, key = c("code", "year"))
+  inner_join(fac_unemployment_rate, key = c("code", "year")) %>% 
+  drop_na()
   
 ```
 # Productivity vs Inflation
