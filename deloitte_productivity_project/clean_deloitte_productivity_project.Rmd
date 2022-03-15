@@ -113,6 +113,9 @@ raw_oecd_min_wage <- multiplesheets(here("data/raw_data/OECD_real_minimum_wages_
 
 
 raw_employee_hour_worked <- read_csv((here("data/raw_data/OECD_employees_hour_worked.csv")))
+
+raw_oecd_avg_wage <- multiplesheets(here("data/raw_data/OECD_average_wages_2020.xlsx"))
+
 ```
 
 
@@ -397,7 +400,6 @@ oecd_min_wage <- raw_oecd_min_wage$`OECD.Stat export` %>%
 
 
 
-raw_oecd_avg_wage <- multiplesheets(here("data/raw_data/OECD_average_wages_2020.xlsx"))
 
 oecd_avg_wage <- raw_oecd_avg_wage$`OECD.Stat export` %>% 
   row_to_names(row_number = 1) %>% 
@@ -509,18 +511,18 @@ filter(countries %in% c("uk", "scotland") & sic != "All Industries") %>%
   mutate(diff_in_oph_percent = 100*((scotland / uk)-1))
 
 
-uk_indus_scot_indus_cat %>%
-  filter(cat != c("L", "O-Q", "R-U")) %>% # CHECK 
-  ggplot()+
-  aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
-  geom_line()+
-  geom_point()+
-  geom_hline(yintercept = 0, linetype = "dashed")+
-  labs(title = "Difference in Productivity Growth Rate",
-       subtitle = "Comparsion between Scotland & the UK")+
-  xlab("Year")+
-  ylab("Output Per Hour Worked (£)")+
-  theme(axis.text.x = element_text(angle = 45))
+# uk_indus_scot_indus_cat %>%
+  # filter(cat != c("L", "O-Q", "R-U")) %>% # CHECK 
+  # ggplot()+
+  # aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
+  # geom_line()+
+  # geom_point()+
+  # geom_hline(yintercept = 0, linetype = "dashed")+
+  # labs(title = "Difference in Productivity Growth Rate",
+  #      subtitle = "Comparsion between Scotland & the UK")+
+  # xlab("Year")+
+  # ylab("Output Per Hour Worked (£)")+
+  # theme(axis.text.x = element_text(angle = 45))
 
 uk_indus_scot_indus_cat %>% 
     filter(cat != c("L", "O-Q", "R-U")) %>% 
@@ -532,9 +534,24 @@ uk_indus_scot_indus_cat %>%
   labs(title = "Difference in Productivity Growth Rate between Scotland and the UK",
        subtitle = "Fitted with simple linear regression model")+
   xlab("Year")+
-  ylab("Grow Rate Difference")+
+  ylab("Grow Rate Difference (%)")+
   theme(axis.text.x = element_text(angle = 45))+
   scale_y_continuous(breaks = seq(-40,40,10))
+
+uk_indus_scot_indus_cat %>% 
+    filter(cat != c("L", "O-Q", "R-U")) %>% 
+  ggplot()+
+  aes(x = year, y = diff_in_oph_percent, group = cat, colour = cat)+
+  geom_point()+
+  # geom_smooth(method = 'lm', se = FALSE)+
+  geom_hline(yintercept = 0, linetype = "dashed")+
+  labs(title = "Difference in Productivity Growth Rate between Scotland and the UK",
+       subtitle = "Fitted with simple linear regression model")+
+  xlab("Year")+
+  ylab("Grow Rate Difference (%)")+
+  theme(axis.text.x = element_text(angle = 45))+
+  scale_y_continuous(breaks = seq(-40,40,10))
+
 
 uk_indus_scot_indus_cat %>% 
   filter(cat %in% c("B-E", "J", "A")) %>% 
@@ -546,7 +563,7 @@ uk_indus_scot_indus_cat %>%
   labs(title = "Difference in Productivity Growth Rate Summary between Scotland and the UK",
        subtitle = "Fitted with simple linear regression model")+
   xlab("Year")+
-  ylab("Growth Rate Difference")+
+  ylab("Growth Rate Difference (%)")+
   theme(axis.text.x = element_text(angle = 45))+
   scale_y_continuous(breaks = seq(-40,40,10))
 
@@ -613,49 +630,6 @@ world_prod_indus <- world_prod_indus_a %>%
   mutate(rate_percent = as.numeric(rate_percent))
 ```
 
-```{r}
-# ukfrance_prod_indus <- world_prod_indus %>% 
-#     filter(country %in% c("United Kingdom", "France")) %>% 
-#     pivot_wider(names_from = country, values_from = rate_percent) %>% 
-#     clean_names() %>% 
-#     mutate(diff_percent = (united_kingdom - france))
-# 
-# 
-# ukfrance_prod_indus %>% 
-#   ggplot()+
-#   aes(year, diff_percent, group = cat, colour = cat)+
-#   # geom_point()+
-#   geom_smooth(method = 'lm', se = FALSE)+
-#   labs(title = "OPH Difference Summary Per Industry between UK and France",
-#        subtitle = "Fitted with simple linear regression model")+
-#   xlab("Year")+
-#   ylab("Difference in percentage (%)")+
-#   theme(axis.text.x = element_text(angle = 45))
-# 
-# 
-# 
-# 
-# 
-#   ylim(-60,60)
-```
-
-```{r}
-  model2 <- lm(diff_percent ~ cat, data = ukfrance_prod_indus)
-
-intercept_coef2 <- (model2[["coefficients"]][1])
-
-
-
-uk_france_coef <- as.data.frame(model2[["coefficients"]]) %>% 
-  rename("coefficient" = c(1)) %>% 
-  rownames_to_column(var = "sic_cat") %>% 
-  mutate(coefficient = coefficient,
-          gradient = round(if_else(coefficient == intercept_coef, intercept_coef, coefficient + intercept_coef2), digits = 2))
-uk_france_coef[1,1] <- "catA"
-
-uk_france_coef %>% 
-  arrange(desc(gradient))
-```
 
 # G7 Test
 ```{r}
