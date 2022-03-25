@@ -1,5 +1,5 @@
 ---
-title: "Final project documentation template - PDA"
+title: "D12 Final Project - UK Productivity Analysis"
 output:
   html_document:
     toc: yes
@@ -10,96 +10,125 @@ output:
     toc: yes
 ---
 
-# Template
-
-<br>
-
 ## Context
 
-#### Business intelligence and data-driven decision making
+### Business intelligence and data-driven decision making
 
-What insights can the business/organisation gain from your analysis and how will your analysis help the business/organisation make better decisions? 
+<!-- What insights can the business/organisation gain from your analysis and how will your analysis help the business/organisation make better decisions?  -->
 
-#### Domain knowledge and the business context
+Readers can utilise the analysis to gain an insight into labour productivity performance for difference industries in Scotland. The analysis also provides data-drive suggestions on economic factors that have influence on productivity. 
 
-Briefly describe the business/organisation and where your analysis fits within its aims/activity. 
+### Domain knowledge and the business context
 
-The project is 
+<!-- Briefly describe the business/organisation and where your analysis fits within its aims/activity.  -->
+
+The analysis is aimed to aid any business development functions to measure their company's productivity. Readers can use the first analysis on industry productivity as a comparison to their own business, and compare how well the business is performed when compared with Scotland and the UK. The second analysis on productivity factors provide suggestions for further improve the labour productivity.
+
 ## Data
 
-#### Internal and external data sources
+### Internal and external data sources
 
 <!-- Briefly describe your data sources and which were internal (provided by the organisation) and external (not sourced from the organisation's data) -->
 
-The original data sources were donated by Deloitte, extracted from [Equifax Ignite Direct](https://www.equifax.co.uk/) data platform. Additional data sources are extracted via [OECD.stat](https://stats.oecd.org/) and [UK National Statistics](https://www.ons.gov.uk/).
+The original data sources were donated by Deloitte, extracted from [Equifax Ignite Direct](https://www.equifax.co.uk/) data platform. Additional data sources were extracted via [OECD.stat](https://stats.oecd.org/) and [UK National Statistics](https://www.ons.gov.uk/).
 
-#### Types of data & Data formats
+### Types of data & Data formats
 
 <!-- What kind of data did you work with? E.g. categorical and numerical data and their sub-types. -->
 <!-- What format did your data come in? E.g. all downloaded flat files (CSV) or any data from APIs, scraping etc. -->
 
 Data sources used for this project contained Time series, Date, Doubles, Numeric & Character. The data sources are stored in Excel files (.xls, .csv, .xlsx etc...) with multiple embedded tabs.
 
-#### Data quality and bias
+### Data quality and bias
 
-Briefly describe the quality of the data and whether you have any reasons to suggest the data is biased e.g. only data from a specific demographic even though a broader demographic would be of interest to the organisation.
+<!-- Briefly describe the quality of the data and whether you have any reasons to suggest the data is biased e.g. only data from a specific demographic even though a broader demographic would be of interest to the organisation. -->
 
-The analysis can only provided a high level overview into the topics. As in real life there is no one way to measure the real-productiviy as different industries have different procedures to follow. There are many confounding variables that are not being taken into consideration during the analysis. The analysis could be biased for those
+The datasets used for this analysis are up-to-date and validated. Sources are extracted from trustworthy authorities.
+
+The analysis provides a high level decoupled analysis of how individual factor affect labour productivity. In reality, there are many confonding factors and interactions that may affect one's productivity, however, they are outwith the consideration of the scope of this project. 
+
 
 ## Ethics
 
-#### Ethical issues in data sourcing and extraction
+### Ethical issues in data sourcing and extraction
 
 <!-- Do you have any ethical concerns regarding the sourcing and extraction of your data?  -->
 
+
 The data sources can be found in open source websites and only contain data per country or industry. No individual data set is being used for this analysis with no ethical concerns.
 
-#### Ethical implications of business requirements
+### Ethical implications of business requirements
 
 <!-- Are there any ethical implications of the business requirements? -->
 
-The analysis provided a high-level overview of how productivity can be improved per industry/in Scotland/in the UK. 
+The datasets used for the analysis don't contain any individual personnel or company's information. Therefore it doesn't have any immediate ethical implication and concerns.
 
 ## Analysis
 
-#### Challenges
+### Stages in the data analysis process
 
-#### Stages in the data analysis process
+<!-- What were the main stages in your data analysis process? -->
 
-What were the main stages in your data analysis process?
 
-#### Tools for data analysis
+Original plan has adapted the generic approach, however, due to the chaotic and inconsistency nature of the datasets, unfamiliar acronyms and lack of economy domain knowledge. The plan was adjusted from one major analysis into 2 small analysis. The original plan and executed plan can be seen below:
 
-What were the main tools you used for your analysis?
+
+#### Original Plan
+
+- Planning
+
+- Research
+
+- Clean & wrangle data
+
+- Process data
+
+- Output results
+
+#### Executed Plan
+
+`Part 01 - Industry Productivity Analysis`
+
+- Research & Gather potential Datasets
+
+- Clean & Wrangle Data
+
+- Analyze Data (modelling)
+
+- Output Results (visualisation)
+
+`Part 02 - Productivity Factor Analysis`
+
+- Research & Gather potential Datasets
+
+- Clean & Wrangle Data
+
+- Analyze Data (hypothesis Test)
+
+- Output Results (visualisation)
+
+### Tools for data analysis
+
+
+
+- Data: Excel
+- Version Control: Github
+- Data Processor: RStudio
+- Processing Language: R
+- Presentation: Powerpoint
+
+
+#### R Libraries included:
+
+- tidyverse
+- janitor
+- readxl
+- here
+- fable
+- lubridate
+- slider
+- infer
 
 #### Descriptive, diagnostic, predictive and prescriptive analysis
 
-The project's aim is to find out factors that can improve productivity in the UK and pin-point which industries are laggin behind in terms of productivity. The analysis required analysing multiple data sources to understand how different factors may affect productivity in the past. Thus, the analysis approach will fall into The Diagnostic Analytics catagory.
-
-
-# PDA Outcomes
-
-### Working with Data (J4Y6 35)
-
-#### 1. Plan an analysis to provide business intelligence
-
--   1.1 Business intelligence and data-driven decision making
--   1.2 Domain knowledge and the business context
--   1.4 Internal and external data sources
--   1.5 Data quality
--   1.6 Stages in the data analysis process
--   1.7 Descriptive, diagnostic, predictive and prescriptive analysis
--   1.9 Ethical implications of business requirements
--   1.10 Tools for data analysis
-
-#### 2. Extract data from a variety of sources
-
--   2.1 Tools for querying data sources
--   2.2 Types of data (categorical and numerical data and their sub-types)
--   2.3 Data formats
--   2.6 Data quality including data bias
--   2.7 Ethical issues in data sourcing and extraction
-
-#### 4. Analyse data to provide business intelligence
-
--   4.7 Role of domain knowledge in interpreting analyses
+The project's aim is to find out factors that can improve productivity in the UK and analysis which industries are lagging behind in terms of productivity. The analysis required analysing historical data to understand how different factors may affect productivity in the past. Thus, the analysis approach will fall into The Diagnostic Analytics category.
